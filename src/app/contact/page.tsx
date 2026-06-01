@@ -18,7 +18,7 @@ export default function ContactPage() {
             animate="visible"
             variants={fadeUp}
           >
-            <h1 className="text-5xl md:text-8xl font-light tracking-tighter mb-8">Hello.</h1>
+            <h1 className="text-5xl md:text-8xl font-light tracking-tighter mb-8">Namaste.</h1>
             <p className="text-xl text-muted font-light mb-16 max-w-sm leading-relaxed">
               We are currently accepting new commissions for residential and cultural projects.
             </p>
