@@ -24,10 +24,10 @@ export function Footer() {
           
           <div className="flex flex-col gap-4">
             <h3 className="text-saffron uppercase tracking-widest text-xs mb-2">Connect</h3>
-            <a href="#" className="hover:text-saffron transition-colors text-sm w-fit flex items-center gap-1 group">
+            <a href="https://www.instagram.com/ahamasmiarchitect/" className="hover:text-saffron transition-colors text-sm w-fit flex items-center gap-1 group">
               Instagram <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </a>
-            <a href="#" className="hover:text-saffron transition-colors text-sm w-fit flex items-center gap-1 group">
+            <a href="https://www.linkedin.com/in/ahamasmi-architect-1a9b3a170/" className="hover:text-saffron transition-colors text-sm w-fit flex items-center gap-1 group">
               LinkedIn <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </a>
             <Link href="/contact" className="hover:text-saffron transition-colors text-sm w-fit">Contact Us</Link>
