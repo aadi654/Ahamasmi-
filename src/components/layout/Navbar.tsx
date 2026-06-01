@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
@@ -16,6 +17,7 @@ const links = [
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,6 +27,10 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const hasHero = pathname === "/" || (pathname.startsWith("/projects/") && pathname !== "/projects");
+  const isDarkBg = hasHero && !isScrolled;
+  const textColorClass = isDarkBg ? "text-white" : "text-foreground";
+
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${
@@ -32,7 +38,7 @@ export function Navbar() {
       }`}
     >
       <div className="container mx-auto px-6 h-24 flex items-center justify-between">
-        <Link href="/" className="text-xl tracking-widest uppercase font-medium z-50 mix-blend-difference text-white">
+        <Link href="/" className={`text-xl tracking-widest uppercase font-medium z-50 transition-colors duration-300 ${textColorClass}`}>
           Ahamasmi
         </Link>
 
@@ -42,7 +48,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm tracking-wide mix-blend-difference text-white hover:text-saffron transition-colors duration-300 relative group"
+              className={`text-sm tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
             >
               {link.label}
               <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-saffron transition-all duration-300 group-hover:w-full" />
