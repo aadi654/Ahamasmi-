@@ -9,7 +9,8 @@ import { Menu, X } from "lucide-react";
 const links = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
-  { href: "/studio", label: "Studio" },
+  // Studio page temporarily disabled
+  { href: "/studio", label: "Studio", disabled: true },
   { href: "/philosophy", label: "Philosophy" },
   { href: "/contact", label: "Contact" },
 ];
@@ -48,6 +49,7 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
+              onClick={link.disabled ? (event) => event.preventDefault() : undefined}
               className={`text-sm tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
             >
               {link.label}
@@ -86,7 +88,13 @@ export function Navbar() {
                 >
                   <Link
                     href={link.href}
-                    onClick={() => setIsOpen(false)}
+                    onClick={(event) => {
+                      if (link.disabled) {
+                        event.preventDefault();
+                        return;
+                      }
+                      setIsOpen(false);
+                    }}
                     className="text-4xl sm:text-5xl tracking-wide hover:text-saffron transition-colors duration-300"
                   >
                     {link.label}

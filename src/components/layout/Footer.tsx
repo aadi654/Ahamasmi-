@@ -11,7 +11,7 @@ export function Footer() {
               Ahamasmi Architect
             </h2>
             <p className="text-muted max-w-sm text-sm tracking-wide leading-relaxed">
-              Premium architecture and spatial design studio based in India. Crafting immersive environments that blur the line between nature and living spaces.
+              Architecturing lines for lives
             </p>
           </div>
           
