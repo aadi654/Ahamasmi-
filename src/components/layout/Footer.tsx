@@ -8,7 +8,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-24">
           <div className="md:col-span-2">
             <h2 className="text-4xl md:text-6xl font-light mb-6 tracking-tight">
-              Ahamasmi
+              Ahamasmi Architect
             </h2>
             <p className="text-muted max-w-sm text-sm tracking-wide leading-relaxed">
               Premium architecture and spatial design studio based in India. Crafting immersive environments that blur the line between nature and living spaces.
@@ -35,7 +35,7 @@ export function Footer() {
         </div>
         
         <div className="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-muted/20 text-xs text-muted tracking-wide">
-          <p>&copy; {new Date().getFullYear()} Ahamasmi Architecture. All Rights Reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Ahamasmi Architect. All Rights Reserved.</p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
