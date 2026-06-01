@@ -39,7 +39,7 @@ export function Navbar() {
     >
       <div className="container mx-auto px-6 h-24 flex items-center justify-between">
         <Link href="/" className={`text-xl tracking-widest uppercase font-medium z-50 transition-colors duration-300 ${textColorClass}`}>
-          Ahamasmi
+          Ahamasmi Architect
         </Link>
 
         {/* Desktop Nav */}
