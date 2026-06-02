@@ -47,18 +47,18 @@ export function Navbar() {
       }`}
     >
       <div className="container mx-auto px-6 h-24 flex items-center justify-between">
-        <Link href="/" className={`text-xl tracking-widest uppercase font-medium z-50 transition-colors duration-300 ${textColorClass}`}>
+        <Link href="/" className={`-translate-x-2 text-3xl tracking-widest uppercase font-medium z-50 transition-colors duration-300 ${textColorClass}`}>
           Ahamasmi Architect
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex gap-10">
+        <nav className="hidden translate-x-6 md:flex gap-10">
           {links.map((link) => (
             link.label === "Projects" ? (
               <div key={link.href} className="relative group/projects">
                 <Link
                   href={link.href}
-                  className={`text-sm tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
+                  className={`text-lg tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
                 >
                   {link.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-saffron transition-all duration-300 group-hover:w-full" />
@@ -82,7 +82,7 @@ export function Navbar() {
                 key={link.href}
                 href={link.href}
                 onClick={link.disabled ? (event) => event.preventDefault() : undefined}
-                className={`text-sm tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
+                className={`text-lg tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
               >
                 {link.label}
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-saffron transition-all duration-300 group-hover:w-full" />

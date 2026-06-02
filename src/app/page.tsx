@@ -22,7 +22,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative h-screen w-full overflow-hidden">
         <Image
-          src="/ahamasmi-hero-saraswati.png"
+          src="/ahamasmi-hero-approved-final.jpg"
           alt="Ahamasmi Architecture Hero"
           fill
           className="object-cover scale-105"
