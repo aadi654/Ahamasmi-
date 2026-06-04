@@ -22,13 +22,13 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative h-screen w-full overflow-hidden">
         <Image
-          src="/ahamasmi-hero-approved-final.jpg"
+          src="/ahamasmi-hero-orange-saraswati-final.jpeg"
           alt="Ahamasmi Architecture Hero"
           fill
           className="object-cover scale-105"
           priority
         />
-        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-black/5" />
         
         <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 lg:p-24 pb-24 md:pb-24">
           <motion.div
@@ -40,7 +40,7 @@ export default function Home() {
             <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl lg:text-9xl font-light tracking-tighter mb-4">
               Spatial
             </motion.h1>
-            <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl lg:text-9xl font-light tracking-tighter mb-8 md:mb-12 text-saffron">
+            <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl lg:text-9xl font-light tracking-tighter mb-8 md:mb-12">
               Narratives
             </motion.h1>
             <motion.p variants={fadeUp} className="text-lg md:text-xl font-light tracking-wide max-w-lg opacity-90">
