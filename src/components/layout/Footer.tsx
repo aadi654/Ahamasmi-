@@ -18,7 +18,7 @@ export function Footer() {
           <div className="flex flex-col gap-4">
             <h3 className="text-saffron uppercase tracking-widest text-xs mb-2">Studio</h3>
             <Link href="/projects" className="hover:text-saffron transition-colors text-sm w-fit">Projects</Link>
-            <Link href="/studio" className="hover:text-saffron transition-colors text-sm w-fit">About</Link>
+            <Link href="/ahamasmiyodhah" className="hover:text-saffron transition-colors text-sm w-fit">Ahamasmiyodhah</Link>
             <Link href="/philosophy" className="hover:text-saffron transition-colors text-sm w-fit">Philosophy</Link>
           </div>
           

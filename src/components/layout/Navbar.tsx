@@ -9,8 +9,7 @@ import { Menu, X } from "lucide-react";
 const links = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
-  // Studio page temporarily disabled
-  { href: "/studio", label: "Studio", disabled: true },
+  { href: "/ahamasmiyodhah", label: "Ahamasmiyodhah" },
   { href: "/philosophy", label: "Philosophy" },
   { href: "/contact", label: "Contact" },
 ];
@@ -21,6 +20,12 @@ const projectSubmenuLinks = [
   { href: "/projects", label: "BIM" },
   { href: "/projects", label: "Urban Design" },
   { href: "/projects", label: "Design & Research" },
+];
+
+const aySubmenuLinks = [
+  { href: "/ahamasmiyodhah#research", label: "Research" },
+  { href: "/ahamasmiyodhah#academy", label: "Academy" },
+  { href: "/ahamasmiyodhah#collaborations", label: "Collaborations" },
 ];
 
 export function Navbar() {
@@ -38,6 +43,7 @@ export function Navbar() {
 
   const hasHero = pathname === "/" || (pathname.startsWith("/projects/") && pathname !== "/projects");
   const showProjectsSubmenu = pathname !== "/";
+  const showAhamasmiyodhahSubmenu = pathname !== "/";
   const isDarkBg = hasHero && !isScrolled;
   const textColorClass = isDarkBg ? "text-white" : "text-foreground";
 
@@ -80,11 +86,35 @@ export function Navbar() {
                   </div>
                 )}
               </div>
+            ) : link.label === "Ahamasmiyodhah" ? (
+              <div key={link.href} className="relative group/ay">
+                <Link
+                  href={link.href}
+                  className={`text-lg tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
+                >
+                  {link.label}
+                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-saffron transition-all duration-300 group-hover:w-full" />
+                </Link>
+                {showAhamasmiyodhahSubmenu && (
+                  <div className="absolute left-1/2 top-full mt-6 -translate-x-1/2 translate-y-2 opacity-0 pointer-events-none group-hover/ay:translate-y-0 group-hover/ay:opacity-100 group-hover/ay:pointer-events-auto transition-all duration-200 ease-out before:absolute before:-top-6 before:left-0 before:h-6 before:w-full before:content-['']">
+                    <div className="flex items-center gap-10 whitespace-nowrap rounded-[6px] bg-white/85 px-8 py-4 text-foreground opacity-70 shadow-[0_12px_40px_rgba(0,0,0,0.12)] backdrop-blur-2xl">
+                      {aySubmenuLinks.map((item) => (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          className="text-sm tracking-wide text-[#000000] transition-colors duration-300 hover:text-saffron"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
             ) : (
               <Link
                 key={link.href}
                 href={link.href}
-                onClick={link.disabled ? (event) => event.preventDefault() : undefined}
                 className={`text-lg tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
               >
                 {link.label}
@@ -124,13 +154,7 @@ export function Navbar() {
                 >
                   <Link
                     href={link.href}
-                    onClick={(event) => {
-                      if (link.disabled) {
-                        event.preventDefault();
-                        return;
-                      }
-                      setIsOpen(false);
-                    }}
+                    onClick={() => setIsOpen(false)}
                     className="text-4xl sm:text-5xl tracking-wide hover:text-saffron transition-colors duration-300"
                   >
                     {link.label}
