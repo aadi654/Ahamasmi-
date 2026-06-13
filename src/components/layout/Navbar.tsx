@@ -37,6 +37,7 @@ export function Navbar() {
   }, []);
 
   const hasHero = pathname === "/" || (pathname.startsWith("/projects/") && pathname !== "/projects");
+  const showProjectsSubmenu = pathname !== "/";
   const isDarkBg = hasHero && !isScrolled;
   const textColorClass = isDarkBg ? "text-white" : "text-foreground";
 
@@ -63,19 +64,21 @@ export function Navbar() {
                   {link.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-saffron transition-all duration-300 group-hover:w-full" />
                 </Link>
-                <div className="absolute left-1/2 top-full mt-6 -translate-x-1/2 translate-y-2 opacity-0 pointer-events-none group-hover/projects:translate-y-0 group-hover/projects:opacity-100 group-hover/projects:pointer-events-auto transition-all duration-200 ease-out before:absolute before:-top-6 before:left-0 before:h-6 before:w-full before:content-['']">
-                  <div className="flex items-center gap-10 whitespace-nowrap rounded-[6px] bg-white/85 px-8 py-4 text-foreground opacity-70 shadow-[0_12px_40px_rgba(0,0,0,0.12)] backdrop-blur-2xl">
-                    {projectSubmenuLinks.map((item) => (
-                      <Link
-                        key={item.label}
-                        href={item.href}
-                        className="text-sm tracking-wide text-[#000000] transition-colors duration-300 hover:text-saffron"
-                      >
-                        {item.label}
-                      </Link>
-                    ))}
+                {showProjectsSubmenu && (
+                  <div className="absolute left-1/2 top-full mt-6 -translate-x-1/2 translate-y-2 opacity-0 pointer-events-none group-hover/projects:translate-y-0 group-hover/projects:opacity-100 group-hover/projects:pointer-events-auto transition-all duration-200 ease-out before:absolute before:-top-6 before:left-0 before:h-6 before:w-full before:content-['']">
+                    <div className="flex items-center gap-10 whitespace-nowrap rounded-[6px] bg-white/85 px-8 py-4 text-foreground opacity-70 shadow-[0_12px_40px_rgba(0,0,0,0.12)] backdrop-blur-2xl">
+                      {projectSubmenuLinks.map((item) => (
+                        <Link
+                          key={item.label}
+                          href={item.href}
+                          className="text-sm tracking-wide text-[#000000] transition-colors duration-300 hover:text-saffron"
+                        >
+                          {item.label}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             ) : (
               <Link
