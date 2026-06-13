@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion, Variants } from "framer-motion";
+import { motion, useScroll, useTransform, Variants } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { use } from "react";
+import { use, useEffect, useRef } from "react";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 40 },
@@ -15,6 +15,13 @@ const imageReveal: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } },
 };
+
+const projectOrder = [
+  { id: "the-courtyard-house", title: "The Courtyard House" },
+  { id: "serenity-pavilion", title: "Serenity Pavilion" },
+  { id: "urban-oasis", title: "Urban Oasis" },
+  { id: "hillside-retreat", title: "Hillside Retreat" },
+];
 
 // Mock data fetcher for UI purposes
 const getProjectData = (slug: string) => {
@@ -33,13 +40,152 @@ const getProjectData = (slug: string) => {
       "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?q=80&w=2940&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?q=80&w=2940&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=2940&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=2940&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600210492493-0946911123ea?q=80&w=2940&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600121848594-d8644e57abab?q=80&w=2940&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?q=80&w=2940&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600607688066-890987f18a86?q=80&w=2940&auto=format&fit=crop",
     ],
   };
 };
 
+type ProjectData = ReturnType<typeof getProjectData>;
+
+function EditorialImage({
+  src,
+  alt,
+  className,
+  priority = false,
+}: {
+  src: string;
+  alt: string;
+  className: string;
+  priority?: boolean;
+}) {
+  return (
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-80px" }}
+      variants={imageReveal}
+      className={`group relative overflow-hidden bg-muted/20 ${className}`}
+    >
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        priority={priority}
+        className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+      />
+    </motion.div>
+  );
+}
+
+function PinnedHorizontalGallery({
+  images,
+  title,
+}: {
+  images: string[];
+  title: string;
+}) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+  const x = useTransform(
+    scrollYProgress,
+    [0, 1],
+    ["0vw", "-322vw"]
+  );
+
+  return (
+    <>
+      <section ref={sectionRef} className="relative hidden h-[520vh] md:block">
+        <div className="sticky top-0 flex h-screen items-center overflow-hidden">
+          <motion.div style={{ x }} className="flex gap-[8vw] pl-[11vw] pr-[11vw]">
+            {images.map((img, idx) => (
+              <div key={img} className="group relative h-[76vh] w-[78vw] shrink-0 overflow-hidden bg-muted/20">
+                <Image
+                  src={img}
+                  alt={`${title} gallery ${idx + 1}`}
+                  fill
+                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                />
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      <section className="space-y-16 px-6 py-16 md:hidden">
+        {images.map((img, idx) => (
+          <EditorialImage
+            key={img}
+            src={img}
+            alt={`${title} gallery ${idx + 1}`}
+            className="aspect-[4/5]"
+          />
+        ))}
+      </section>
+    </>
+  );
+}
+
+function FinalImageSequence({ project }: { project: ProjectData }) {
+  return (
+    <>
+      <section className="pb-32 px-6 container mx-auto">
+        <EditorialImage
+          src={project.visualImages[0]}
+          alt={`${project.title} primary view`}
+          className="min-h-[70vh] md:aspect-[16/9]"
+          priority
+        />
+      </section>
+
+      <PinnedHorizontalGallery
+        images={project.visualImages.slice(1, 6)}
+        title={project.title}
+      />
+
+      <section className="pt-20 pb-0 md:pt-32 md:pb-0">
+        <EditorialImage
+          src={project.visualImages[6]}
+          alt={`${project.title} closing view`}
+          className="h-[84vh] w-full"
+        />
+      </section>
+    </>
+  );
+}
+
 export default function ProjectDetail({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = use(params);
   const project = getProjectData(resolvedParams.slug);
+  const currentProjectIndex = projectOrder.findIndex((item) => item.id === resolvedParams.slug);
+  const nextProject = projectOrder[
+    currentProjectIndex >= 0 ? (currentProjectIndex + 1) % projectOrder.length : 0
+  ];
+
+  useEffect(() => {
+    if (sessionStorage.getItem("next-project-scroll-top") !== "true") return;
+
+    sessionStorage.removeItem("next-project-scroll-top");
+    window.history.scrollRestoration = "manual";
+
+    const scrollToTop = (behavior: ScrollBehavior) => {
+      window.scrollTo({ top: 0, left: 0, behavior });
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+
+    scrollToTop("auto");
+    requestAnimationFrame(() => scrollToTop("smooth"));
+    const timeoutId = window.setTimeout(() => scrollToTop("auto"), 120);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [resolvedParams.slug]);
 
   return (
     <div className="bg-background min-h-screen">
@@ -90,127 +236,22 @@ export default function ProjectDetail({ params }: { params: Promise<{ slug: stri
         </div>
       </section>
 
-      {/* Large Hero Image */}
-      <section className="pb-32 px-6 container mx-auto">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={imageReveal}
-          className="group relative min-h-[70vh] overflow-hidden bg-muted/20 md:aspect-[16/9]"
-        >
-          <Image
-            src={project.visualImages[0]}
-            alt={`${project.title} primary view`}
-            fill
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-            priority
-          />
-        </motion.div>
-      </section>
-
-      {/* Full Width Image */}
-      <section className="py-16 md:py-24">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={imageReveal}
-          className="group relative h-[80vh] w-full overflow-hidden bg-muted/20"
-        >
-          <Image
-            src={project.visualImages[1]}
-            alt={`${project.title} wide architectural view`}
-            fill
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-          />
-        </motion.div>
-      </section>
-
-      {/* Two Column Detail Image Grid */}
-      <section className="py-24 md:py-32 px-6 container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-          {project.visualImages.slice(2, 4).map((img, idx) => (
-            <motion.div
-              key={img}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
-              variants={imageReveal}
-              className={`group relative overflow-hidden bg-muted/20 ${idx === 0 ? "aspect-[4/5]" : "aspect-[3/4]"}`}
-            >
-              <Image
-                src={img}
-                alt={`${project.title} detail ${idx + 1}`}
-                fill
-                className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-              />
-            </motion.div>
-          ))}
-        </div>
-      </section>
-
-      {/* Large Full Width Image */}
-      <section className="py-16 md:py-24">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={imageReveal}
-          className="group relative h-[78vh] w-full overflow-hidden bg-muted/20"
-        >
-          <Image
-            src={project.visualImages[4]}
-            alt={`${project.title} spatial view`}
-            fill
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-          />
-        </motion.div>
-      </section>
-
-      {/* Single Detail Image */}
-      <section className="py-24 md:py-32 px-6 container mx-auto">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={imageReveal}
-          className="group relative mx-auto aspect-[4/5] max-w-4xl overflow-hidden bg-muted/20"
-        >
-          <Image
-            src={project.visualImages[5]}
-            alt={`${project.title} material detail`}
-            fill
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-          />
-        </motion.div>
-      </section>
-
-      {/* Closing Image */}
-      <section className="pt-16 pb-24 md:pt-24 md:pb-32">
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={imageReveal}
-          className="group relative h-[82vh] w-full overflow-hidden bg-muted/20"
-        >
-          <Image
-            src={project.visualImages[6]}
-            alt={`${project.title} closing view`}
-            fill
-            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-          />
-        </motion.div>
-      </section>
+      <FinalImageSequence project={project} />
 
       {/* Next Project CTA */}
-      <section className="py-32 bg-foreground text-background">
+      <section className="py-32 md:py-40 bg-foreground text-background">
         <div className="container mx-auto px-6 flex flex-col items-center text-center">
           <span className="uppercase tracking-widest text-xs text-muted mb-8">Next Project</span>
-          <Link href="/projects/serenity-pavilion" className="group">
+          <Link
+            href={`/projects/${nextProject.id}`}
+            className="group"
+            scroll={false}
+            onClick={() => {
+              sessionStorage.setItem("next-project-scroll-top", "true");
+            }}
+          >
             <h2 className="text-4xl md:text-7xl font-light tracking-tighter hover:text-saffron transition-colors duration-500 flex items-center gap-6">
-              Serenity Pavilion <ArrowRight size={48} className="opacity-0 -translate-x-10 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500" />
+              {nextProject.title} <ArrowRight size={48} className="opacity-0 -translate-x-10 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-500" />
             </h2>
           </Link>
         </div>
