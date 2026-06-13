@@ -46,6 +46,10 @@ export function Navbar() {
   const showAhamasmiyodhahSubmenu = pathname !== "/";
   const isDarkBg = hasHero && !isScrolled;
   const textColorClass = isDarkBg ? "text-white" : "text-foreground";
+  const projectSubmenuTextClass =
+    isDarkBg ? "text-white/56 hover:text-white" : "text-foreground/56 hover:text-foreground";
+  const projectSubmenuSeparatorClass =
+    isDarkBg ? "text-white/24" : "text-foreground/35";
 
   return (
     <header
@@ -72,15 +76,20 @@ export function Navbar() {
                 </Link>
                 {showProjectsSubmenu && (
                   <div className="absolute left-1/2 top-full mt-6 -translate-x-1/2 translate-y-2 opacity-0 pointer-events-none group-hover/projects:translate-y-0 group-hover/projects:opacity-100 group-hover/projects:pointer-events-auto transition-all duration-200 ease-out before:absolute before:-top-6 before:left-0 before:h-6 before:w-full before:content-['']">
-                    <div className="flex items-center gap-10 whitespace-nowrap rounded-[6px] bg-white/85 px-8 py-4 text-foreground opacity-70 shadow-[0_12px_40px_rgba(0,0,0,0.12)] backdrop-blur-2xl">
-                      {projectSubmenuLinks.map((item) => (
-                        <Link
-                          key={item.label}
-                          href={item.href}
-                          className="text-sm tracking-wide text-[#000000] transition-colors duration-300 hover:text-saffron"
-                        >
-                          {item.label}
-                        </Link>
+                    <div className="flex w-max max-w-[min(90vw,760px)] flex-wrap items-center justify-center gap-y-4 px-2 py-2 text-sm tracking-[0.2em]">
+                      {projectSubmenuLinks.map((item, index) => (
+                        <div key={item.label} className="flex items-center">
+                          <Link
+                            href={item.href}
+                            className={`group relative pb-2 transition-colors duration-300 ${projectSubmenuTextClass}`}
+                          >
+                            {item.label}
+                            <span className="absolute bottom-0 left-0 h-[1px] w-full origin-left scale-x-0 bg-saffron transition-transform duration-300 group-hover:scale-x-100" />
+                          </Link>
+                          {index < projectSubmenuLinks.length - 1 && (
+                            <span className={`mx-4 ${projectSubmenuSeparatorClass}`}>/</span>
+                          )}
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -97,15 +106,20 @@ export function Navbar() {
                 </Link>
                 {showAhamasmiyodhahSubmenu && (
                   <div className="absolute left-1/2 top-full mt-6 -translate-x-1/2 translate-y-2 opacity-0 pointer-events-none group-hover/ay:translate-y-0 group-hover/ay:opacity-100 group-hover/ay:pointer-events-auto transition-all duration-200 ease-out before:absolute before:-top-6 before:left-0 before:h-6 before:w-full before:content-['']">
-                    <div className="flex items-center gap-10 whitespace-nowrap rounded-[6px] bg-white/85 px-8 py-4 text-foreground opacity-70 shadow-[0_12px_40px_rgba(0,0,0,0.12)] backdrop-blur-2xl">
-                      {aySubmenuLinks.map((item) => (
-                        <Link
-                          key={item.label}
-                          href={item.href}
-                          className="text-sm tracking-wide text-[#000000] transition-colors duration-300 hover:text-saffron"
-                        >
-                          {item.label}
-                        </Link>
+                    <div className="flex w-max max-w-[min(90vw,760px)] flex-wrap items-center justify-center gap-y-4 px-2 py-2 text-sm tracking-[0.2em]">
+                      {aySubmenuLinks.map((item, index) => (
+                        <div key={item.label} className="flex items-center">
+                          <Link
+                            href={item.href}
+                            className={`group relative pb-2 transition-colors duration-300 ${projectSubmenuTextClass}`}
+                          >
+                            {item.label}
+                            <span className="absolute bottom-0 left-0 h-[1px] w-full origin-left scale-x-0 bg-saffron transition-transform duration-300 group-hover:scale-x-100" />
+                          </Link>
+                          {index < aySubmenuLinks.length - 1 && (
+                            <span className={`mx-4 ${projectSubmenuSeparatorClass}`}>/</span>
+                          )}
+                        </div>
                       ))}
                     </div>
                   </div>
