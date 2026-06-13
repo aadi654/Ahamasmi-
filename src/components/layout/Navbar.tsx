@@ -31,6 +31,8 @@ const aySubmenuLinks = [
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeSubmenu, setActiveSubmenu] = useState<"projects" | "ahamasmiyodhah" | null>(null);
+  const [activeSubmenuLeft, setActiveSubmenuLeft] = useState<number | null>(null);
   const pathname = usePathname();
 
   useEffect(() => {
@@ -50,9 +52,23 @@ export function Navbar() {
     isDarkBg ? "text-white/56 hover:text-white" : "text-foreground/56 hover:text-foreground";
   const projectSubmenuSeparatorClass =
     isDarkBg ? "text-white/24" : "text-foreground/35";
+  const activeSubmenuLinks =
+    activeSubmenu === "projects"
+      ? projectSubmenuLinks
+      : activeSubmenu === "ahamasmiyodhah"
+        ? aySubmenuLinks
+        : [];
+  const updateSubmenuPosition = (element: HTMLElement) => {
+    const rect = element.getBoundingClientRect();
+    setActiveSubmenuLeft(rect.left + rect.width / 2);
+  };
 
   return (
     <header
+      onMouseLeave={() => {
+        setActiveSubmenu(null);
+        setActiveSubmenuLeft(null);
+      }}
       className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${
         isScrolled ? "bg-background/80 backdrop-blur-md" : "bg-transparent"
       }`}
@@ -66,7 +82,20 @@ export function Navbar() {
         <nav className="hidden translate-x-6 md:flex gap-10">
           {links.map((link) => (
             link.label === "Projects" ? (
-              <div key={link.href} className="relative group/projects">
+              <div
+                key={link.href}
+                className="relative group/projects"
+                onMouseEnter={(event) => {
+                  if (!showProjectsSubmenu) return;
+                  setActiveSubmenu("projects");
+                  updateSubmenuPosition(event.currentTarget);
+                }}
+                onFocus={(event) => {
+                  if (!showProjectsSubmenu) return;
+                  setActiveSubmenu("projects");
+                  updateSubmenuPosition(event.currentTarget);
+                }}
+              >
                 <Link
                   href={link.href}
                   className={`text-lg tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
@@ -74,29 +103,22 @@ export function Navbar() {
                   {link.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-saffron transition-all duration-300 group-hover:w-full" />
                 </Link>
-                {showProjectsSubmenu && (
-                  <div className="absolute left-1/2 top-full mt-6 -translate-x-1/2 translate-y-2 opacity-0 pointer-events-none group-hover/projects:translate-y-0 group-hover/projects:opacity-100 group-hover/projects:pointer-events-auto transition-all duration-200 ease-out before:absolute before:-top-6 before:left-0 before:h-6 before:w-full before:content-['']">
-                    <div className="flex w-max max-w-[min(90vw,760px)] flex-wrap items-center justify-center gap-y-4 px-2 py-2 text-sm tracking-[0.2em]">
-                      {projectSubmenuLinks.map((item, index) => (
-                        <div key={item.label} className="flex items-center">
-                          <Link
-                            href={item.href}
-                            className={`group relative pb-2 transition-colors duration-300 ${projectSubmenuTextClass}`}
-                          >
-                            {item.label}
-                            <span className="absolute bottom-0 left-0 h-[1px] w-full origin-left scale-x-0 bg-saffron transition-transform duration-300 group-hover:scale-x-100" />
-                          </Link>
-                          {index < projectSubmenuLinks.length - 1 && (
-                            <span className={`mx-4 ${projectSubmenuSeparatorClass}`}>/</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             ) : link.label === "Ahamasmiyodhah" ? (
-              <div key={link.href} className="relative group/ay">
+              <div
+                key={link.href}
+                className="relative group/ay"
+                onMouseEnter={(event) => {
+                  if (!showAhamasmiyodhahSubmenu) return;
+                  setActiveSubmenu("ahamasmiyodhah");
+                  updateSubmenuPosition(event.currentTarget);
+                }}
+                onFocus={(event) => {
+                  if (!showAhamasmiyodhahSubmenu) return;
+                  setActiveSubmenu("ahamasmiyodhah");
+                  updateSubmenuPosition(event.currentTarget);
+                }}
+              >
                 <Link
                   href={link.href}
                   className={`text-lg tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
@@ -104,31 +126,19 @@ export function Navbar() {
                   {link.label}
                   <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-saffron transition-all duration-300 group-hover:w-full" />
                 </Link>
-                {showAhamasmiyodhahSubmenu && (
-                  <div className="absolute left-1/2 top-full mt-6 -translate-x-1/2 translate-y-2 opacity-0 pointer-events-none group-hover/ay:translate-y-0 group-hover/ay:opacity-100 group-hover/ay:pointer-events-auto transition-all duration-200 ease-out before:absolute before:-top-6 before:left-0 before:h-6 before:w-full before:content-['']">
-                    <div className="flex w-max max-w-[min(90vw,760px)] flex-wrap items-center justify-center gap-y-4 px-2 py-2 text-sm tracking-[0.2em]">
-                      {aySubmenuLinks.map((item, index) => (
-                        <div key={item.label} className="flex items-center">
-                          <Link
-                            href={item.href}
-                            className={`group relative pb-2 transition-colors duration-300 ${projectSubmenuTextClass}`}
-                          >
-                            {item.label}
-                            <span className="absolute bottom-0 left-0 h-[1px] w-full origin-left scale-x-0 bg-saffron transition-transform duration-300 group-hover:scale-x-100" />
-                          </Link>
-                          {index < aySubmenuLinks.length - 1 && (
-                            <span className={`mx-4 ${projectSubmenuSeparatorClass}`}>/</span>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             ) : (
               <Link
                 key={link.href}
                 href={link.href}
+                onMouseEnter={() => {
+                  setActiveSubmenu(null);
+                  setActiveSubmenuLeft(null);
+                }}
+                onFocus={() => {
+                  setActiveSubmenu(null);
+                  setActiveSubmenuLeft(null);
+                }}
                 className={`text-lg tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
               >
                 {link.label}
@@ -146,6 +156,30 @@ export function Navbar() {
         >
           {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
+      </div>
+
+      <div className="relative hidden min-h-12 w-full px-6 md:block">
+        <div
+          style={{ left: activeSubmenuLeft ?? "50%" }}
+          className={`absolute top-0 flex w-max max-w-[min(90vw,760px)] -translate-x-1/2 flex-wrap items-center justify-center gap-y-4 px-2 py-2 text-sm tracking-[0.2em] transition-opacity duration-200 ${
+            activeSubmenu ? "opacity-100" : "pointer-events-none opacity-0"
+          }`}
+        >
+          {activeSubmenuLinks.map((item, index) => (
+            <div key={item.label} className="flex items-center">
+              <Link
+                href={item.href}
+                className={`group relative pb-2 transition-colors duration-300 ${projectSubmenuTextClass}`}
+              >
+                {item.label}
+                <span className="absolute bottom-0 left-0 h-[1px] w-full origin-left scale-x-0 bg-saffron transition-transform duration-300 group-hover:scale-x-100" />
+              </Link>
+              {index < activeSubmenuLinks.length - 1 && (
+                <span className={`mx-4 ${projectSubmenuSeparatorClass}`}>/</span>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Mobile Menu */}

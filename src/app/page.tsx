@@ -90,16 +90,24 @@ export default function Home() {
             variants={fadeUp}
             className="group block mt-0 md:mt-24"
           >
-            <div className="relative aspect-[4/5] overflow-hidden mb-6 bg-muted/20">
+            <div className="relative aspect-[4/5] overflow-hidden bg-muted/20">
               <Image
                 src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2940&auto=format&fit=crop"
                 alt="The Courtyard House"
                 fill
-                className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.03]"
               />
+              <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-black/22 to-transparent p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <div className="translate-y-3 transition-transform duration-500 group-hover:translate-y-0">
+                  <h3 className="text-2xl font-light tracking-tight text-white">The Courtyard House</h3>
+                  <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-3 text-xs uppercase tracking-[0.18em] text-white/72">
+                    <p>Bangalore</p>
+                    <p>2024</p>
+                    <p>Residential</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <h3 className="text-2xl font-light mb-2 group-hover:text-saffron transition-colors">The Courtyard House</h3>
-            <p className="text-muted tracking-wide text-sm">Residential &mdash; Bangalore</p>
           </MotionLink>
 
           {/* Project 2 */}
@@ -111,16 +119,24 @@ export default function Home() {
             variants={fadeUp}
             className="group block"
           >
-            <div className="relative aspect-[3/4] overflow-hidden mb-6 bg-muted/20">
+            <div className="relative aspect-[3/4] overflow-hidden bg-muted/20">
               <Image
                 src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2940&auto=format&fit=crop"
                 alt="Serenity Pavilion"
                 fill
-                className="object-cover transition-transform duration-1000 group-hover:scale-105"
+                className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.03]"
               />
+              <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-black/22 to-transparent p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                <div className="translate-y-3 transition-transform duration-500 group-hover:translate-y-0">
+                  <h3 className="text-2xl font-light tracking-tight text-white">Serenity Pavilion</h3>
+                  <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-3 text-xs uppercase tracking-[0.18em] text-white/72">
+                    <p>Kerala</p>
+                    <p>2023</p>
+                    <p>Cultural</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <h3 className="text-2xl font-light mb-2 group-hover:text-saffron transition-colors">Serenity Pavilion</h3>
-            <p className="text-muted tracking-wide text-sm">Cultural &mdash; Kerala</p>
           </MotionLink>
         </div>
       </section>

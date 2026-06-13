@@ -143,7 +143,7 @@ export default function ProjectsPage() {
                   className={`group ${idx % 2 === 1 ? "md:mt-32" : ""}`}
                 >
                   <Link href={`/projects/${project.id}`} className="block">
-                    <div className={`relative ${project.aspect} overflow-hidden mb-6 bg-muted/20`}>
+                    <div className={`relative ${project.aspect} overflow-hidden bg-muted/20`}>
                       <Image
                         src={project.image}
                         alt={project.title}
@@ -159,12 +159,6 @@ export default function ProjectsPage() {
                             <p>{project.category}</p>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-2xl font-light mb-2 group-hover:text-saffron transition-colors">{project.title}</h3>
-                        <p className="text-muted tracking-wide text-sm">{project.category} &mdash; {project.location}</p>
                       </div>
                     </div>
                   </Link>
