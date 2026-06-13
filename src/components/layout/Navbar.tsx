@@ -43,7 +43,7 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const hasHero = pathname === "/" || (pathname.startsWith("/projects/") && pathname !== "/projects");
+  const hasHero = pathname === "/";
   const showProjectsSubmenu = pathname !== "/";
   const showAhamasmiyodhahSubmenu = pathname !== "/";
   const isDarkBg = hasHero && !isScrolled;
@@ -69,11 +69,11 @@ export function Navbar() {
         setActiveSubmenu(null);
         setActiveSubmenuLeft(null);
       }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${
+      className={`pointer-events-none fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${
         isScrolled ? "bg-background/80 backdrop-blur-md" : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-6 h-24 flex items-center justify-between">
+      <div className="container mx-auto px-6 h-24 flex items-center justify-between pointer-events-auto">
         <Link href="/" className={`-translate-x-2 text-3xl tracking-widest uppercase font-medium z-50 transition-colors duration-300 ${textColorClass}`}>
           Ahamasmi Architect
         </Link>
@@ -158,7 +158,11 @@ export function Navbar() {
         </button>
       </div>
 
-      <div className="relative hidden min-h-12 w-full px-6 md:block">
+      <div
+        className={`relative hidden min-h-12 w-full px-6 md:block ${
+          activeSubmenu ? "pointer-events-auto" : "pointer-events-none"
+        }`}
+      >
         <div
           style={{ left: activeSubmenuLeft ?? "50%" }}
           className={`absolute top-0 flex w-max max-w-[min(90vw,760px)] -translate-x-1/2 flex-wrap items-center justify-center gap-y-4 px-2 py-2 text-sm tracking-[0.2em] transition-opacity duration-200 ${

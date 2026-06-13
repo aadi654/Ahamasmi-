@@ -11,6 +11,11 @@ const fadeUp: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } },
 };
 
+const imageReveal: Variants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } },
+};
+
 // Mock data fetcher for UI purposes
 const getProjectData = (slug: string) => {
   return {
@@ -20,12 +25,15 @@ const getProjectData = (slug: string) => {
     year: "2025",
     area: "4,500 sqft",
     heroImage: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2940&auto=format&fit=crop",
-    narrative: "Designed with a deep respect for the existing landscape, this project blurs the boundaries between the built environment and the natural world. The structure emerges organically, utilizing locally sourced materials to create a sustainable dialogue with its context. The core philosophy was to craft spaces that breathe, utilizing cross-ventilation and natural light to dictate the rhythm of the day.",
-    gallery: [
+    visualImages: [
+      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2940&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600607687644-aac4c1566905?q=80&w=2940&auto=format&fit=crop",
       "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=2940&auto=format&fit=crop",
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2940&auto=format&fit=crop"
+      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?q=80&w=2940&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?q=80&w=2940&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?q=80&w=2940&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1600566752355-35792bedcfea?q=80&w=2940&auto=format&fit=crop",
     ],
-    fullWidthImage: "https://images.unsplash.com/photo-1600607687644-aac4c1566905?q=80&w=2940&auto=format&fit=crop",
   };
 };
 
@@ -35,18 +43,6 @@ export default function ProjectDetail({ params }: { params: Promise<{ slug: stri
 
   return (
     <div className="bg-background min-h-screen">
-      {/* Hero */}
-      <section className="relative h-screen w-full">
-        <Image
-          src={project.heroImage}
-          alt={project.title}
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/20" />
-      </section>
-
       {/* Metadata & Title */}
       <section className="py-24 px-6 container mx-auto">
         <Link href="/projects" className="inline-flex items-center gap-2 text-sm uppercase tracking-widest hover:text-saffron transition-colors mb-16">
@@ -94,49 +90,117 @@ export default function ProjectDetail({ params }: { params: Promise<{ slug: stri
         </div>
       </section>
 
-      {/* Narrative */}
-      <section className="py-24 px-6 container mx-auto">
-        <div className="max-w-4xl mx-auto">
-          <motion.p 
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: "-100px" }}
-            variants={fadeUp}
-            className="text-2xl md:text-4xl font-light leading-relaxed tracking-tight"
-          >
-            {project.narrative}
-          </motion.p>
-        </div>
+      {/* Large Hero Image */}
+      <section className="pb-32 px-6 container mx-auto">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={imageReveal}
+          className="group relative min-h-[70vh] overflow-hidden bg-muted/20 md:aspect-[16/9]"
+        >
+          <Image
+            src={project.visualImages[0]}
+            alt={`${project.title} primary view`}
+            fill
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+            priority
+          />
+        </motion.div>
       </section>
 
-      {/* Masonry Gallery */}
-      <section className="py-24 px-6 container mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-12">
-          {project.gallery.map((img, idx) => (
+      {/* Full Width Image */}
+      <section className="py-16 md:py-24">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={imageReveal}
+          className="group relative h-[80vh] w-full overflow-hidden bg-muted/20"
+        >
+          <Image
+            src={project.visualImages[1]}
+            alt={`${project.title} wide architectural view`}
+            fill
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          />
+        </motion.div>
+      </section>
+
+      {/* Two Column Detail Image Grid */}
+      <section className="py-24 md:py-32 px-6 container mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+          {project.visualImages.slice(2, 4).map((img, idx) => (
             <motion.div
-              key={idx}
+              key={img}
               initial="hidden"
               whileInView="visible"
-              viewport={{ once: true }}
-              variants={fadeUp}
-              className={`relative ${idx % 2 === 0 ? "aspect-[4/5]" : "aspect-[3/4] md:mt-24"} bg-muted/20`}
+              viewport={{ once: true, margin: "-80px" }}
+              variants={imageReveal}
+              className={`group relative overflow-hidden bg-muted/20 ${idx === 0 ? "aspect-[4/5]" : "aspect-[3/4]"}`}
             >
-              <Image src={img} alt="Gallery Image" fill className="object-cover" />
+              <Image
+                src={img}
+                alt={`${project.title} detail ${idx + 1}`}
+                fill
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+              />
             </motion.div>
           ))}
         </div>
       </section>
 
-      {/* Full Width Impact */}
-      <section className="py-12">
+      {/* Large Full Width Image */}
+      <section className="py-16 md:py-24">
         <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true }}
-          variants={fadeUp}
-          className="relative h-[80vh] w-full"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={imageReveal}
+          className="group relative h-[78vh] w-full overflow-hidden bg-muted/20"
         >
-          <Image src={project.fullWidthImage} alt="Details" fill className="object-cover" />
+          <Image
+            src={project.visualImages[4]}
+            alt={`${project.title} spatial view`}
+            fill
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          />
+        </motion.div>
+      </section>
+
+      {/* Single Detail Image */}
+      <section className="py-24 md:py-32 px-6 container mx-auto">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={imageReveal}
+          className="group relative mx-auto aspect-[4/5] max-w-4xl overflow-hidden bg-muted/20"
+        >
+          <Image
+            src={project.visualImages[5]}
+            alt={`${project.title} material detail`}
+            fill
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          />
+        </motion.div>
+      </section>
+
+      {/* Closing Image */}
+      <section className="pt-16 pb-24 md:pt-24 md:pb-32">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={imageReveal}
+          className="group relative h-[82vh] w-full overflow-hidden bg-muted/20"
+        >
+          <Image
+            src={project.visualImages[6]}
+            alt={`${project.title} closing view`}
+            fill
+            className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          />
         </motion.div>
       </section>
 
