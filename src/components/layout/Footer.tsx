@@ -19,7 +19,7 @@ export function Footer() {
             <h3 className="text-saffron uppercase tracking-widest text-xs mb-2">Studio</h3>
             <Link href="/projects" className="hover:text-saffron transition-colors text-sm w-fit">Projects</Link>
             <Link href="/ahamasmiyodhah" className="hover:text-saffron transition-colors text-sm w-fit">Ahamasmiyodhah</Link>
-            <Link href="/philosophy" className="hover:text-saffron transition-colors text-sm w-fit">Philosophy</Link>
+            <Link href="/philosophy" className="hover:text-saffron transition-colors text-sm w-fit">I am</Link>
           </div>
           
           <div className="flex flex-col gap-4">

@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
@@ -30,6 +30,13 @@ const initialFormData: ContactFormData = {
   siteDetails: "",
   projectDetails: "",
   uploadedFiles: [],
+};
+
+const getFileKey = (file: File) => `${file.name}-${file.size}-${file.lastModified}`;
+
+const formatFileSize = (size: number) => {
+  if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} KB`;
+  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
 };
 
 export default function ContactPage() {
@@ -81,12 +88,58 @@ export default function ContactPage() {
     setErrors((current) => ({ ...current, [field]: undefined }));
   };
 
-  const updateFiles = (files: FileList | null) => {
-    const uploadedFiles = files ? Array.from(files) : [];
+  const updateFiles = (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(event.target.files ?? []);
 
-    setFormData((current) => ({ ...current, uploadedFiles }));
+    if (selectedFiles.length === 0) return;
+
+    const nextFiles = [...formData.uploadedFiles];
+    const existingFileKeys = new Set(nextFiles.map(getFileKey));
+    const messages: string[] = [];
+
+    selectedFiles.forEach((file) => {
+      if (file.size > MAX_FILE_SIZE) {
+        messages.push(`${file.name} is larger than 5 MB.`);
+        return;
+      }
+
+      const fileKey = getFileKey(file);
+      if (existingFileKeys.has(fileKey)) {
+        if (!messages.includes("This file has already been added.")) {
+          messages.push("This file has already been added.");
+        }
+        return;
+      }
+
+      if (nextFiles.length >= MAX_FILES) {
+        if (!messages.includes("You can upload a maximum of 5 files.")) {
+          messages.push("You can upload a maximum of 5 files.");
+        }
+        return;
+      }
+
+      nextFiles.push(file);
+      existingFileKeys.add(fileKey);
+    });
+
+    setFormData((current) => ({ ...current, uploadedFiles: nextFiles }));
+    setErrors((current) => ({
+      ...current,
+      uploadedFiles: messages.length > 0 ? messages.join(" ") : undefined,
+    }));
+
+    event.target.value = "";
+  };
+
+  const removeUploadedFile = (indexToRemove: number) => {
+    setFormData((current) => ({
+      ...current,
+      uploadedFiles: current.uploadedFiles.filter((_, index) => index !== indexToRemove),
+    }));
     setErrors((current) => ({ ...current, uploadedFiles: undefined }));
   };
+
+  const hasMaxFiles = formData.uploadedFiles.length >= MAX_FILES;
 
   return (
     <div className="bg-background min-h-screen pt-32 pb-32">
@@ -111,14 +164,16 @@ export default function ContactPage() {
               </div>
               <div>
                 <p className="text-saffron uppercase tracking-widest text-xs font-medium mb-2">Phone</p>
-                <p className="text-xl">+91 98765 43210</p>
+                <p className="text-xl">+91 87629 10876</p>
               </div>
               <div>
                 <p className="text-saffron uppercase tracking-widest text-xs font-medium mb-2">Studio</p>
                 <p className="text-xl text-muted">
-                  123 Design District<br />
-                  Bangalore, Karnataka<br />
-                  India 560001
+                  Sampurna Chambers,<br />
+                  Vasavi Temple St,<br />
+                  Vishweshwarapura,<br />
+                  Basavanagudi,<br />
+                  Bengaluru, Karnataka 560004
                 </p>
               </div>
             </div>
@@ -130,7 +185,7 @@ export default function ContactPage() {
             transition={{ delay: 0.4, duration: 1 }}
             className="bg-muted/5 p-8 md:p-12 rounded-sm"
           >
-            <form className="flex flex-col gap-10" onSubmit={handleSubmit}>
+            <form className="contact-form flex flex-col gap-10" onSubmit={handleSubmit}>
               <div className="group">
                 <label 
                   htmlFor="name" 
@@ -233,19 +288,68 @@ export default function ContactPage() {
                 >
                   File Upload
                 </label>
-                <input
-                  type="file"
-                  id="uploadedFiles"
-                  name="uploadedFiles"
-                  multiple
-                  onChange={(event) => updateFiles(event.target.files)}
-                  className="w-full bg-transparent border-b border-foreground/20 py-4 focus:outline-none focus:border-saffron transition-colors file:mr-6 file:rounded-full file:border-0 file:bg-foreground file:px-5 file:py-2 file:text-xs file:uppercase file:tracking-widest file:text-background file:transition-colors hover:file:bg-saffron"
-                />
-                <p className="text-muted text-sm leading-relaxed mt-4">
-                  Upload reference images, drawings, site photographs, inspiration images, or supporting documents.
-                  <br />
-                  Maximum 5 files. Maximum 5 MB per file.
-                </p>
+                <div className="border-b border-foreground/20 pb-5 transition-colors group-focus-within:border-saffron">
+                  <input
+                    type="file"
+                    id="uploadedFiles"
+                    name="uploadedFiles"
+                    multiple
+                    disabled={hasMaxFiles}
+                    onChange={updateFiles}
+                    className="sr-only"
+                  />
+                  <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <label
+                      htmlFor="uploadedFiles"
+                      aria-disabled={hasMaxFiles}
+                      className={`inline-flex w-fit items-center justify-center rounded-full px-5 py-2 text-xs uppercase tracking-widest transition-colors ${
+                        hasMaxFiles
+                          ? "cursor-not-allowed bg-foreground/10 text-foreground/38"
+                          : "cursor-pointer bg-foreground text-background hover:bg-saffron"
+                      }`}
+                    >
+                      Choose files
+                    </label>
+                    <p className="text-xs uppercase tracking-[0.18em] text-muted">
+                      {formData.uploadedFiles.length}/{MAX_FILES} files
+                    </p>
+                  </div>
+
+                  <p className="mt-4 text-sm leading-relaxed text-muted">
+                    Upload up to 5 files. Maximum 5 MB per file.
+                  </p>
+
+                  {hasMaxFiles && (
+                    <p className="mt-3 text-xs uppercase tracking-[0.18em] text-foreground/50">
+                      Maximum 5 files added.
+                    </p>
+                  )}
+
+                  {formData.uploadedFiles.length > 0 && (
+                    <div className="mt-6 space-y-3">
+                      {formData.uploadedFiles.map((file, index) => (
+                        <div
+                          key={getFileKey(file)}
+                          className="flex items-center gap-4 border-t border-foreground/10 pt-3"
+                        >
+                          <div className="min-w-0 flex-1">
+                            <p className="truncate text-sm tracking-wide text-foreground">{file.name}</p>
+                            <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted">
+                              {formatFileSize(file.size)}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => removeUploadedFile(index)}
+                            className="shrink-0 text-xs uppercase tracking-[0.18em] text-foreground/48 transition-colors hover:text-saffron"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
                 {errors.uploadedFiles && <p className="text-saffron text-xs mt-3">{errors.uploadedFiles}</p>}
               </div>
 
