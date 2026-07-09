@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 
-const categories = ["All", "Residential", "Cultural", "Commercial"];
+const categories = ["All", "Architecture", "Interior", "BIM", "Urban Design"];
 
 const projectStats = [
   { value: "35+", label: "Projects" },
@@ -18,7 +18,7 @@ const projects = [
   {
     id: "the-courtyard-house",
     title: "The Courtyard House",
-    category: "Residential",
+    category: "Architecture",
     location: "Bangalore",
     year: "2024",
     image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2940&auto=format&fit=crop",
@@ -27,7 +27,7 @@ const projects = [
   {
     id: "serenity-pavilion",
     title: "Serenity Pavilion",
-    category: "Cultural",
+    category: "Interior",
     location: "Kerala",
     year: "2023",
     image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2940&auto=format&fit=crop",
@@ -36,7 +36,7 @@ const projects = [
   {
     id: "urban-oasis",
     title: "Urban Oasis",
-    category: "Commercial",
+    category: "Urban Design",
     location: "Mumbai",
     year: "2022",
     image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2940&auto=format&fit=crop",
@@ -45,7 +45,7 @@ const projects = [
   {
     id: "hillside-retreat",
     title: "Hillside Retreat",
-    category: "Residential",
+    category: "BIM",
     location: "Pune",
     year: "2021",
     image: "https://images.unsplash.com/photo-1510798831971-661eb04b3739?q=80&w=2788&auto=format&fit=crop",
@@ -94,6 +94,12 @@ export default function ProjectsPage() {
                     <p className="mt-1 text-[11px] uppercase tracking-[0.22em] text-foreground/42">{stat.label}</p>
                   </div>
                 ))}
+              </div>
+              <div className="mt-8 border-t border-foreground/10 pt-6">
+                <p className="text-[11px] uppercase tracking-[0.22em] text-foreground/42">GLOBAL FOOTPRINTS</p>
+                <p className="mt-3 text-sm font-light leading-relaxed tracking-[0.14em] text-foreground/72">
+                  Israel / London / Africa / Dubai
+                </p>
               </div>
             </div>
           </motion.div>

@@ -50,7 +50,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Philosophy Preview */}
+      {/* Studio Preview */}
       <section className="py-32 md:py-48 px-6 container mx-auto">
         <motion.div
           initial="hidden"
@@ -65,7 +65,7 @@ export default function Home() {
           <div className="mt-16 border-t border-foreground/10 pt-8 flex items-center justify-between">
             <span className="uppercase tracking-widest text-xs font-medium text-muted">Ahamasmi Studio</span>
             <Link href="/philosophy" className="group flex items-center gap-2 text-sm uppercase tracking-widest hover:text-saffron transition-colors">
-              Our Philosophy <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              I am <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
         </motion.div>

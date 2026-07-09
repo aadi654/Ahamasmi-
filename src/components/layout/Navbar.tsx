@@ -10,7 +10,7 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/ahamasmiyodhah", label: "Ahamasmiyodhah" },
-  { href: "/philosophy", label: "Philosophy" },
+  { href: "/philosophy", label: "I AM" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -19,11 +19,10 @@ const projectSubmenuLinks = [
   { href: "/projects", label: "Interior" },
   { href: "/projects", label: "BIM" },
   { href: "/projects", label: "Urban Design" },
-  { href: "/projects", label: "Design & Research" },
 ];
 
 const aySubmenuLinks = [
-  { href: "/ahamasmiyodhah#research", label: "Research" },
+  { href: "/ahamasmiyodhah#research", label: "Design & Research" },
   { href: "/ahamasmiyodhah#academy", label: "Academy" },
   { href: "/ahamasmiyodhah#collaborations", label: "Collaborations" },
 ];
@@ -139,7 +138,7 @@ export function Navbar() {
                   setActiveSubmenu(null);
                   setActiveSubmenuLeft(null);
                 }}
-                className={`text-lg tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
+                className={`text-lg ${link.label === "I AM" ? "tracking-[0.14em]" : "tracking-wide"} transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
               >
                 {link.label}
                 <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-saffron transition-all duration-300 group-hover:w-full" />
@@ -207,7 +206,7 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     onClick={() => setIsOpen(false)}
-                    className="text-4xl sm:text-5xl tracking-wide hover:text-saffron transition-colors duration-300"
+                    className={`text-4xl sm:text-5xl ${link.label === "I AM" ? "tracking-[0.14em]" : "tracking-wide"} hover:text-saffron transition-colors duration-300`}
                   >
                     {link.label}
                   </Link>
