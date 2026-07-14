@@ -11,6 +11,10 @@ const fadeUp: Variants = {
 
 const MAX_FILES = 5;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const WHATSAPP_NUMBER = "918762910876";
+const PROJECT_TYPES = ["Residential", "Commercial", "Cultural", "Other"] as const;
+
+type ProjectType = (typeof PROJECT_TYPES)[number] | "";
 
 type FormErrors = Partial<Record<keyof ContactFormData | "uploadedFiles", string>>;
 
@@ -18,6 +22,7 @@ type ContactFormData = {
   name: string;
   phoneNumber: string;
   email: string;
+  projectType: ProjectType;
   siteDetails: string;
   projectDetails: string;
   uploadedFiles: File[];
@@ -27,6 +32,7 @@ const initialFormData: ContactFormData = {
   name: "",
   phoneNumber: "",
   email: "",
+  projectType: "",
   siteDetails: "",
   projectDetails: "",
   uploadedFiles: [],
@@ -38,6 +44,17 @@ const formatFileSize = (size: number) => {
   if (size < 1024 * 1024) return `${Math.max(1, Math.round(size / 1024))} KB`;
   return `${(size / (1024 * 1024)).toFixed(1)} MB`;
 };
+
+const WhatsAppIcon = () => (
+  <svg
+    aria-hidden="true"
+    viewBox="0 0 24 24"
+    className="h-4 w-4 shrink-0"
+    fill="currentColor"
+  >
+    <path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.08-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.44-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.08-.15-.67-1.61-.91-2.2-.24-.58-.48-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.48 0 1.46 1.06 2.88 1.21 3.07.15.2 2.09 3.19 5.06 4.47.71.3 1.26.48 1.69.62.71.23 1.35.2 1.86.12.57-.08 1.75-.72 2-1.41.25-.69.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35ZM12.05 2a9.94 9.94 0 0 0-8.46 15.16L2.5 21.5l4.44-1.04A9.94 9.94 0 1 0 12.05 2Zm0 18.22a8.25 8.25 0 0 1-4.2-1.15l-.3-.18-2.63.62.63-2.57-.2-.32a8.22 8.22 0 1 1 6.7 3.6Z" />
+  </svg>
+);
 
 export default function ContactPage() {
   const [formData, setFormData] = useState<ContactFormData>(initialFormData);
@@ -53,6 +70,7 @@ export default function ContactPage() {
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
       nextErrors.email = "Please enter a valid email address.";
     }
+    if (!data.projectType) nextErrors.projectType = "Please select a project type.";
     if (!data.siteDetails.trim()) nextErrors.siteDetails = "Please provide site details.";
     if (!data.projectDetails.trim()) nextErrors.projectDetails = "Please provide project details.";
     if (data.uploadedFiles.length > MAX_FILES) nextErrors.uploadedFiles = "Maximum 5 files allowed.";
@@ -71,16 +89,34 @@ export default function ContactPage() {
 
     if (Object.keys(nextErrors).length > 0) return;
 
-    const submissionPayload = {
-      name: formData.name.trim(),
-      phoneNumber: formData.phoneNumber.trim(),
-      email: formData.email.trim(),
-      siteDetails: formData.siteDetails.trim(),
-      projectDetails: formData.projectDetails.trim(),
-      uploadedFiles: formData.uploadedFiles,
-    };
+    const filesMessage =
+      formData.uploadedFiles.length > 0
+        ? "I have selected files and will share them directly here on WhatsApp."
+        : "No files uploaded at this stage.";
 
-    console.info("Contact form submission", submissionPayload);
+    const message = `Namaste Ahamasmi Architect,
+
+I would like to submit a project request.
+
+Name: ${formData.name.trim()}
+Phone: ${formData.phoneNumber.trim()}
+Email: ${formData.email.trim()}
+Project Type: ${formData.projectType}
+
+Site Details:
+${formData.siteDetails.trim()}
+
+Project Details:
+${formData.projectDetails.trim()}
+
+Files:
+${filesMessage}
+
+Thank you.`;
+
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+    window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 
   const updateField = (field: keyof Omit<ContactFormData, "uploadedFiles">, value: string) => {
@@ -253,6 +289,35 @@ export default function ContactPage() {
               </div>
 
               <div className="group">
+                <p className="block text-muted text-xs uppercase tracking-widest mb-3 group-focus-within:text-saffron transition-colors">
+                  Project Type *
+                </p>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4" role="radiogroup" aria-label="Project Type">
+                  {PROJECT_TYPES.map((projectType) => {
+                    const isSelected = formData.projectType === projectType;
+
+                    return (
+                      <button
+                        key={projectType}
+                        type="button"
+                        role="radio"
+                        aria-checked={isSelected}
+                        onClick={() => updateField("projectType", projectType)}
+                        className={`rounded-full border px-4 py-3 text-xs uppercase tracking-widest transition-colors focus:outline-none focus:border-saffron ${
+                          isSelected
+                            ? "border-saffron bg-saffron text-background"
+                            : "border-foreground/20 text-muted hover:border-saffron hover:text-foreground"
+                        }`}
+                      >
+                        {projectType}
+                      </button>
+                    );
+                  })}
+                </div>
+                {errors.projectType && <p className="text-saffron text-xs mt-3">{errors.projectType}</p>}
+              </div>
+
+              <div className="group">
                 <label 
                   htmlFor="siteDetails" 
                   className="block text-muted text-xs uppercase tracking-widest mb-3 group-focus-within:text-saffron transition-colors"
@@ -325,7 +390,7 @@ export default function ContactPage() {
                   </div>
 
                   <p className="mt-4 text-sm leading-relaxed text-muted">
-                    Upload up to 5 files. Maximum 5 MB per file.
+                    Upload up to 5 files. Files can be shared directly on WhatsApp after your request opens.
                   </p>
 
                   {hasMaxFiles && (
@@ -362,8 +427,16 @@ export default function ContactPage() {
                 {errors.uploadedFiles && <p className="text-saffron text-xs mt-3">{errors.uploadedFiles}</p>}
               </div>
 
-              <button className="group self-start flex items-center gap-4 text-background bg-foreground px-8 py-4 rounded-full text-sm uppercase tracking-widest hover:bg-saffron transition-colors duration-300 mt-4">
-                Submit Request <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+              <p className="text-sm leading-relaxed text-muted">
+                Your request will open in WhatsApp for review before sending.
+              </p>
+
+              <button type="submit" className="group self-start flex items-center gap-4 text-background bg-foreground px-8 py-4 rounded-full text-sm uppercase tracking-widest hover:bg-saffron transition-colors duration-300 mt-4">
+                <span className="flex items-center gap-2">
+                  <WhatsAppIcon />
+                  Send WhatsApp Request
+                </span>
+                <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
               </button>
             </form>
           </motion.div>
