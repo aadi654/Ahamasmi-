@@ -20,12 +20,6 @@ const sections = [
     title: "A focused learning environment for taekwondo and personal growth.",
     body: "The academy introduces structured training, student development, workshops, and educational programming. Final content can include class formats, instructors, curriculum, registrations, and the Deccan Taekwondo Academy relationship.",
   },
-  {
-    id: "collaborations",
-    eyebrow: "Collaborations",
-    title: "Partnerships across education, culture, sport, and design.",
-    body: "This space can feature institutional partnerships, community events, research collaborations, demonstrations, and interdisciplinary initiatives that connect Ahamasmiyodhah with schools, academies, and cultural organizations.",
-  },
 ];
 
 export default function AhamasmiyodhahPage() {
@@ -43,7 +37,7 @@ export default function AhamasmiyodhahPage() {
             Education through discipline, movement, and culture.
           </h1>
           <p className="text-xl md:text-2xl text-muted font-light leading-relaxed max-w-3xl">
-            A class 42 registered educational initiative exploring martial arts, research, and collaborations through a people-centric lens.
+            A class 42 registered educational initiative exploring martial arts, research, and education through a people-centric lens.
           </p>
         </motion.div>
 

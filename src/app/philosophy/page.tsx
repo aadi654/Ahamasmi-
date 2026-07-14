@@ -115,7 +115,7 @@ export default function IAmPage() {
                 variants={fadeUp}
                 className="max-w-5xl text-5xl font-light leading-[1.02] tracking-tight text-balance sm:text-6xl md:text-7xl lg:text-8xl"
               >
-                Aham Asmi.
+                Ahamasmi.
                 <br />
                 I am, therefore I create.
               </motion.h1>

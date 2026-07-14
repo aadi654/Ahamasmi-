@@ -24,7 +24,6 @@ const projectSubmenuLinks = [
 const aySubmenuLinks = [
   { href: "/ahamasmiyodhah#research", label: "Design & Research" },
   { href: "/ahamasmiyodhah#academy", label: "Academy" },
-  { href: "/ahamasmiyodhah#collaborations", label: "Collaborations" },
 ];
 
 export function Navbar() {

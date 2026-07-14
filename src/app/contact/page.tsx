@@ -152,15 +152,24 @@ export default function ContactPage() {
           >
             <h1 className="text-5xl md:text-8xl font-light tracking-tighter mb-8">Namaste.</h1>
             <p className="text-xl text-muted font-light mb-16 max-w-sm leading-relaxed">
-              We are currently accepting new commissions for residential and cultural projects.
+              We design spaces you imagine into places you can experience.<br />
+              From your requirements to your dreams, we shape environments that feel personal, purposeful, and alive.
+              <br />
+              <br />
+              Architecture for life, guided by people-centric design, is the DNA of our firm.
             </p>
             
             <div className="space-y-8">
               <div>
                 <p className="text-saffron uppercase tracking-widest text-xs font-medium mb-2">Email</p>
-                <a href="mailto:studio@ahamasmi.com" className="text-xl hover:text-saffron transition-colors">
-                  studio@ahamasmi.com
-                </a>
+                <div className="space-y-1">
+                  <a href="mailto:vid@ahamasmi.com" className="block text-xl hover:text-saffron transition-colors">
+                    vid@ahamasmi.com
+                  </a>
+                  <a href="mailto:ahamasmiyodhah@outlook.com" className="block text-xl hover:text-saffron transition-colors">
+                    ahamasmiyodhah@outlook.com
+                  </a>
+                </div>
               </div>
               <div>
                 <p className="text-saffron uppercase tracking-widest text-xs font-medium mb-2">Phone</p>
