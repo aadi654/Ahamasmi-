@@ -25,7 +25,7 @@ export default function Home() {
           src="/ahamasmi-hero-orange-saraswati-final.jpeg"
           alt="Ahamasmi Architecture Hero"
           fill
-          className="object-cover scale-105"
+          className="hero-artwork object-cover"
           priority
         />
         <div className="absolute inset-0 bg-black/5" />
@@ -48,6 +48,40 @@ export default function Home() {
             </motion.p>
           </motion.div>
         </div>
+        <style jsx global>{`
+          .hero-artwork {
+            object-position: center center;
+            transform: translate3d(0, clamp(48px, 7vh, 72px), 0) scale(1.16);
+            transform-origin: center;
+          }
+
+          @media (min-width: 1024px) and (max-height: 920px) {
+            .hero-artwork {
+              object-position: center top;
+              transform: translate3d(0, clamp(88px, 11vh, 116px), 0) scale(1.2);
+            }
+          }
+
+          @media (min-width: 1600px) and (max-height: 920px) {
+            .hero-artwork {
+              object-position: center top;
+              transform: translate3d(0, clamp(104px, 12vh, 128px), 0) scale(1.2);
+            }
+          }
+
+          @media (min-width: 1600px) and (min-height: 921px) {
+            .hero-artwork {
+              object-position: center top;
+              transform: translate3d(0, clamp(92px, 9vh, 120px), 0) scale(1.18);
+            }
+          }
+
+          @media (max-width: 767px) {
+            .hero-artwork {
+              transform: translate3d(0, clamp(32px, 6vh, 56px), 0) scale(1.14);
+            }
+          }
+        `}</style>
       </section>
 
       {/* Studio Preview */}
