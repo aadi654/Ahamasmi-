@@ -209,7 +209,7 @@ Thank you.`;
               </div>
               <div>
                 <p className="text-saffron uppercase tracking-widest text-xs font-medium mb-2">Phone</p>
-                <p className="text-xl">+91 87629 10876</p>
+                <p className="text-xl">+91 92703 84782</p>
               </div>
               <div>
                 <p className="text-saffron uppercase tracking-widest text-xs font-medium mb-2">Studio</p>

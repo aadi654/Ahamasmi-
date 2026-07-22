@@ -4,8 +4,38 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import {
+  getAllProjects,
+  getProjectsByCategory,
+  projectCategories,
+  projectCategoryLabels,
+  Project,
+  ProjectCategory,
+} from "@/content/projects";
 
-const categories = ["All", "Architecture", "Interior", "BIM", "Urban Design"];
+type ProjectFilter = "all" | ProjectCategory;
+
+const categories: { value: ProjectFilter; label: string }[] = [
+  { value: "all", label: "All" },
+  ...projectCategories.map((category) => ({
+    value: category,
+    label: projectCategoryLabels[category],
+  })),
+];
+
+const cardAspectClasses: Record<NonNullable<Project["cardAspect"]>, string> = {
+  portrait: "aspect-[4/5]",
+  square: "aspect-square",
+  landscape: "aspect-[4/3]",
+};
+
+function getProjectCardAspectClass(project: Project, index: number) {
+  if (project.cardAspect === "portrait" && index % 2 === 1) {
+    return "aspect-[3/4]";
+  }
+
+  return project.cardAspect ? cardAspectClasses[project.cardAspect] : "aspect-[4/5]";
+}
 
 const projectStats = [
   { value: "35+", label: "Projects" },
@@ -14,51 +44,14 @@ const projectStats = [
   { value: "12", label: "Years" },
 ];
 
-const projects = [
-  {
-    id: "the-courtyard-house",
-    title: "The Courtyard House",
-    category: "Architecture",
-    location: "Bangalore",
-    year: "2024",
-    image: "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?q=80&w=2940&auto=format&fit=crop",
-    aspect: "aspect-[4/5]",
-  },
-  {
-    id: "serenity-pavilion",
-    title: "Serenity Pavilion",
-    category: "Interior",
-    location: "Kerala",
-    year: "2023",
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2940&auto=format&fit=crop",
-    aspect: "aspect-[3/4]",
-  },
-  {
-    id: "urban-oasis",
-    title: "Urban Oasis",
-    category: "Urban Design",
-    location: "Mumbai",
-    year: "2022",
-    image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2940&auto=format&fit=crop",
-    aspect: "aspect-square",
-  },
-  {
-    id: "hillside-retreat",
-    title: "Hillside Retreat",
-    category: "BIM",
-    location: "Pune",
-    year: "2021",
-    image: "https://images.unsplash.com/photo-1510798831971-661eb04b3739?q=80&w=2788&auto=format&fit=crop",
-    aspect: "aspect-[4/3]",
-  }
-];
-
 export default function ProjectsPage() {
-  const [activeCategory, setActiveCategory] = useState("All");
+  const [activeCategory, setActiveCategory] = useState<ProjectFilter>("all");
 
-  const filteredProjects = projects.filter(
-    (p) => activeCategory === "All" || p.category === activeCategory
-  );
+  const filteredProjects =
+    activeCategory === "all" ? getAllProjects() : getProjectsByCategory(activeCategory);
+  const activeCategoryLabel =
+    activeCategory === "all" ? "All" : projectCategoryLabels[activeCategory];
+  const isBimEmpty = activeCategory === "bim" && filteredProjects.length === 0;
 
   return (
     <div className="bg-background text-foreground min-h-screen">
@@ -111,17 +104,17 @@ export default function ProjectsPage() {
             className="mt-14 flex flex-wrap items-center gap-y-4 text-sm tracking-[0.2em]"
           >
             {categories.map((cat, index) => (
-              <div key={cat} className="flex items-center">
+              <div key={cat.value} className="flex items-center">
                 <button
-                  onClick={() => setActiveCategory(cat)}
+                  onClick={() => setActiveCategory(cat.value)}
                   className={`group relative pb-2 transition-colors duration-300 ${
-                    activeCategory === cat ? "text-saffron" : "text-foreground/56 hover:text-foreground"
+                    activeCategory === cat.value ? "text-saffron" : "text-foreground/56 hover:text-foreground"
                   }`}
                 >
-                  {cat}
+                  {cat.label}
                   <span
                     className={`absolute bottom-0 left-0 h-[1px] w-full origin-left bg-saffron transition-transform duration-300 ${
-                      activeCategory === cat ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                      activeCategory === cat.value ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                     }`}
                   />
                 </button>
@@ -148,21 +141,23 @@ export default function ProjectsPage() {
                   transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
                   className={`group ${idx % 2 === 1 ? "md:mt-32" : ""}`}
                 >
-                  <Link href={`/projects/${project.id}`} className="block">
-                    <div className={`relative ${project.aspect} overflow-hidden bg-muted/20`}>
+                  <Link href={`/projects/${project.slug}`} className="block">
+                    <div className={`relative ${getProjectCardAspectClass(project, idx)} overflow-hidden bg-muted/20`}>
                       <Image
-                        src={project.image}
-                        alt={project.title}
+                        src={project.coverImage}
+                        alt={project.coverAlt || project.title}
                         fill
+                        sizes="(min-width: 768px) 50vw, 100vw"
+                        style={{ objectPosition: project.coverPosition || "center" }}
                         className="object-cover transition-transform duration-1000 ease-out group-hover:scale-[1.03]"
                       />
                       <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/70 via-black/22 to-transparent p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
                         <div className="translate-y-3 transition-transform duration-500 group-hover:translate-y-0">
                           <h3 className="text-2xl font-light tracking-tight text-white">{project.title}</h3>
                           <div className="mt-4 grid grid-cols-2 gap-x-8 gap-y-3 text-xs uppercase tracking-[0.18em] text-white/72">
-                            <p>{project.location}</p>
-                            <p>{project.year}</p>
-                            <p>{project.category}</p>
+                            {project.location && <p>{project.location}</p>}
+                            {project.completionYear && <p>{project.completionYear}</p>}
+                            <p>{projectCategoryLabels[project.category]}</p>
                           </div>
                         </div>
                       </div>
@@ -172,6 +167,18 @@ export default function ProjectsPage() {
               ))}
             </AnimatePresence>
           </motion.div>
+          {filteredProjects.length === 0 && (
+            <div className="pt-2">
+              <p className="text-sm font-light tracking-wide text-foreground/62">
+                {isBimEmpty
+                  ? "BIM portfolio currently being curated."
+                  : `${activeCategoryLabel} portfolio currently being curated.`}
+              </p>
+              <p className="mt-2 text-sm font-light tracking-wide text-foreground/42">
+                Selected work will be added soon.
+              </p>
+            </div>
+          )}
         </div>
       </section>
     </div>
