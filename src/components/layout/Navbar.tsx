@@ -22,8 +22,8 @@ const projectSubmenuLinks = [
 ];
 
 const aySubmenuLinks = [
-  { href: "/ahamasmiyodhah#research", label: "Design & Research" },
   { href: "/ahamasmiyodhah#academy", label: "Academy" },
+  { href: "/ahamasmiyodhah#design-research", label: "Design & Research" },
 ];
 
 export function Navbar() {
@@ -40,6 +40,24 @@ export function Navbar() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setIsOpen(false);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isOpen]);
 
   const hasHero = pathname === "/";
   const showProjectsSubmenu = pathname !== "/";
@@ -59,6 +77,11 @@ export function Navbar() {
   const updateSubmenuPosition = (element: HTMLElement) => {
     const rect = element.getBoundingClientRect();
     setActiveSubmenuLeft(rect.left + rect.width / 2);
+  };
+  const closeMobileMenu = () => {
+    setIsOpen(false);
+    setActiveSubmenu(null);
+    setActiveSubmenuLeft(null);
   };
 
   return (
@@ -151,6 +174,8 @@ export function Navbar() {
           className="md:hidden z-50 text-foreground mix-blend-difference text-white"
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
+          aria-controls="mobile-navigation"
+          aria-expanded={isOpen}
         >
           {isOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
@@ -188,24 +213,26 @@ export function Navbar() {
       <AnimatePresence>
         {isOpen && (
           <motion.div
+            id="mobile-navigation"
             initial={{ opacity: 0, y: "-100%" }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: "-100%" }}
             transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 bg-background z-40 flex flex-col items-center justify-center"
+            className="pointer-events-auto fixed inset-0 bg-background z-40 flex flex-col items-center justify-center"
           >
-            <nav className="flex flex-col gap-8 text-center">
+            <nav className="pointer-events-auto flex flex-col gap-8 text-center" aria-label="Mobile navigation">
               {links.map((link, i) => (
                 <motion.div
                   key={link.href}
+                  className="pointer-events-auto"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.2 + i * 0.1, duration: 0.5 }}
                 >
                   <Link
                     href={link.href}
-                    onClick={() => setIsOpen(false)}
-                    className={`text-4xl sm:text-5xl ${link.label === "I AM" ? "tracking-[0.14em]" : "tracking-wide"} hover:text-saffron transition-colors duration-300`}
+                    onClick={closeMobileMenu}
+                    className={`pointer-events-auto block min-h-12 px-4 text-4xl sm:text-5xl ${link.label === "I AM" ? "tracking-[0.14em]" : "tracking-wide"} hover:text-saffron focus:outline-none focus:text-saffron transition-colors duration-300`}
                   >
                     {link.label}
                   </Link>

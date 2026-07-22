@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import Image from "next/image";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 40 },
@@ -22,71 +23,439 @@ const lineGrow: Variants = {
   },
 };
 
-const teamMembers = [
+type StudioProfile = {
+  name: string;
+  role: string;
+  image: string;
+  alt: string;
+  imagePosition?: string;
+};
+
+const studioLeaders: StudioProfile[] = [
   {
-    name: "Principal Architect",
-    category: "STUDIO DIRECTION",
-    description: "Guides the architectural intent, client dialogue, and long-view design decisions.",
-    pattern: "axis",
+    name: "NEELAM MEHTA UPASE",
+    role: "Principal Architect",
+    image: "/images/team/neelam-mehta-upas.jpeg",
+    alt: "Neelam Mehta Upase, Principal Architect",
+    imagePosition: "center 52%",
   },
   {
-    name: "Design Lead",
-    category: "CONCEPT & DEVELOPMENT",
-    description: "Shapes spatial ideas into clear, considered architectural narratives.",
-    pattern: "grid",
-  },
-  {
-    name: "BIM / Documentation Lead",
-    category: "TECHNICAL COORDINATION",
-    description: "Builds precise documentation systems that carry design through execution.",
-    pattern: "trace",
-  },
-  {
-    name: "Interior Design Collaborator",
-    category: "MATERIAL & EXPERIENCE",
-    description: "Develops interior atmospheres through material, proportion, and detail.",
-    pattern: "plane",
-  },
-  {
-    name: "Urban Design Associate",
-    category: "CONTEXT & SYSTEMS",
-    description: "Studies movement, public life, and larger spatial relationships.",
-    pattern: "field",
-  },
-  {
-    name: "Design Research Collaborator",
-    category: "RESEARCH & INQUIRY",
-    description: "Connects design thinking with observation, culture, and evolving practice.",
-    pattern: "line",
+    name: "AR. NIKET SUNIL UPASE",
+    role: "Founder Architect",
+    image: "/images/team/niket-sunil-upase.jpeg",
+    alt: "Ar. Niket Sunil Upase, Founder Architect",
+    imagePosition: "center center",
   },
 ];
 
-const featuredTeamMember = teamMembers[0];
-const supportingTeamMembers = teamMembers.slice(1);
-
-const collaborationClusters = [
+const studioTeam: StudioProfile[] = [
   {
-    number: "01",
-    label: "DESIGN LENS",
-    title: "Design Disciplines",
-    items: ["Architecture", "Interior", "Urban Design", "Design & Research"],
-    description: "Spatial ideas shaped across architecture, interiors, cities, research, and cultural context.",
+    name: "Yashwanth",
+    role: "Networking Officer",
+    image: "/images/team/yashwanth.jpg",
+    alt: "Yashwanth, Networking Officer",
+    imagePosition: "center 32%",
   },
   {
-    number: "02",
-    label: "TECHNICAL RIGOUR",
-    title: "Technical Allies",
-    items: ["BIM", "Structural", "Lighting"],
-    description: "Precision from engineers, modelers, and specialists who help carry an idea into buildable form.",
+    name: "Nandini Choudhary",
+    role: "Interior Designer",
+    image: "/images/team/nandini-choudhary.jpg",
+    alt: "Nandini Choudhary, Interior Designer",
+    imagePosition: "center 28%",
   },
   {
-    number: "03",
-    label: "CRAFT & CONTEXT",
-    title: "Material & Place",
-    items: ["Landscape", "Artisans & Material Partners"],
-    description: "Grounded partnerships with landscape, climate, craft, material, and the hands that shape detail.",
+    name: "Saraswathi Shette",
+    role: "BIM Engineer",
+    image: "/images/team/saraswathi-shette.jpg",
+    alt: "Saraswathi Shette, BIM Engineer",
+    imagePosition: "center 28%",
+  },
+  {
+    name: "Shashank C. Balaji",
+    role: "BIM Architect",
+    image: "/images/team/shashank-c-balaji.jpg",
+    alt: "Shashank C. Balaji, BIM Architect",
+    imagePosition: "center 28%",
+  },
+  {
+    name: "Yashaswini SM",
+    role: "Junior Engineer",
+    image: "/images/team/yashaswini-sm.jpg",
+    alt: "Yashaswini SM, Junior Engineer",
+    imagePosition: "center 30%",
   },
 ];
+
+type Collaborator = {
+  name: string;
+  role: string;
+  organisation: string;
+  location: string;
+  portrait: string;
+  alt: string;
+  objectPosition?: string;
+};
+
+type CollaborationLogo = {
+  name: string;
+  image: string;
+  alt: string;
+  className?: string;
+};
+
+const collaborators: Collaborator[] = [
+  {
+    name: "Ar. Sharifah Alawiyah",
+    role: "Managing Partner",
+    organisation: "Designworks Architects & Consultants Sdn. Bhd.",
+    location: "Malaysia",
+    portrait: "/images/collaborators/sharifah-alawiyah.png",
+    alt: "Ar. Sharifah Alawiyah, Managing Partner",
+    objectPosition: "center 28%",
+  },
+  {
+    name: "Melissa Kirchmann",
+    role: "Founder",
+    organisation: "ROOM DESIGN",
+    location: "South Africa",
+    portrait: "/images/collaborators/melissa-kirchman.png",
+    alt: "Melissa Kirchmann, Founder of ROOM DESIGN",
+    objectPosition: "center 34%",
+  },
+  {
+    name: "Janet Ewens",
+    role: "Founder, Preventative Healthcare",
+    organisation: "Babylon Health Hub",
+    location: "London",
+    portrait: "/images/collaborators/janet-ewens.jpg",
+    alt: "Janet Ewens, Founder of Babylon Health Hub",
+    objectPosition: "center 30%",
+  },
+  {
+    name: "Udayan Deshpande",
+    role: "Founder",
+    organisation: "Home Awaits",
+    location: "India",
+    portrait: "/images/collaborators/udayan-deshpande.jpg",
+    alt: "Udayan Deshpande, Founder of Home Awaits",
+    objectPosition: "center 32%",
+  },
+];
+
+const collaborationLogos: CollaborationLogo[] = [
+  {
+    name: "Designworks Architects & Consultants Sdn. Bhd.",
+    image: "/images/collaborators/logos/designworks.png",
+    alt: "Designworks Architects and Consultants logo",
+  },
+  {
+    name: "ROOM DESIGN",
+    image: "/images/collaborators/logos/room-design.png",
+    alt: "ROOM DESIGN logo",
+    className: "max-w-[10rem]",
+  },
+  {
+    name: "Babylon Health Hub",
+    image: "/images/collaborators/logos/babylon-health-hub.jpg",
+    alt: "Babylon Health Hub logo",
+  },
+  {
+    name: "Home Awaits",
+    image: "/images/collaborators/logos/home-awaits.jpg",
+    alt: "Home Awaits logo",
+    className: "max-w-[5.5rem]",
+  },
+  {
+    name: "Indian Taekwondo Kick Boxing Association",
+    image: "/images/collaborators/logos/itkba.png",
+    alt: "Indian Taekwondo Kick Boxing Association logo",
+    className: "max-w-[6.5rem]",
+  },
+];
+
+const institutionalCollaborator = {
+  label: "Martial Arts & Education",
+  name: "Indian Taekwondo Kick Boxing Association",
+  shortName: "ITKBA",
+  logo: "/images/collaborators/logos/itkba.png",
+  logoAlt: "Indian Taekwondo Kick Boxing Association logo",
+  description: "Part of Ahamasmi’s martial arts and educational network.",
+};
+
+const itkbaGrandmasters = [
+  {
+    name: "SHREE SANTOSH CHAVARE",
+    role: "Grandmaster, Indian Taekwondo Kick Boxing Association",
+    position: "President, School of Chota Commandos",
+    location: "Solapur, Maharashtra",
+    image: "/images/collaborators/santosh-chavare.jpg",
+    alt: "Shree Santosh Chavare",
+    objectPosition: "center 28%",
+  },
+  {
+    name: "SHREE ULHAAS CHAVARE",
+    role: "Secretary and Chief Instructor, Indian Taekwondo Kick Boxing Association",
+    position: "Chief Instructor, School of Chota Commandos",
+    affiliation: "Sai Sham Lodge and Restaurant",
+    location: "Solapur, Maharashtra",
+    image: "/images/collaborators/ulhaas-chavare.jpg",
+    alt: "Shree Ulhaas Chavare",
+    objectPosition: "center 24%",
+  },
+] as const;
+
+type TeamProfileProps = {
+  member: StudioProfile;
+  variant: "leadership" | "team";
+};
+
+const TeamProfile = ({ member, variant }: TeamProfileProps) => {
+  const isLeadership = variant === "leadership";
+
+  return (
+    <motion.article
+      variants={fadeUp}
+      className={`group w-full border-t border-foreground/12 pt-5 ${
+        isLeadership ? "mx-auto max-w-[30rem] md:max-w-none" : "mx-auto max-w-[22rem] sm:max-w-none"
+      }`}
+    >
+      <div
+        className={`relative overflow-hidden bg-foreground/[0.035] ${
+          isLeadership ? "mb-5 aspect-[4/5]" : "mb-4 aspect-[4/5]"
+        }`}
+      >
+        <Image
+          src={member.image}
+          alt={member.alt}
+          fill
+          sizes={
+            isLeadership
+              ? "(min-width: 1024px) 42vw, (min-width: 768px) 45vw, 100vw"
+              : "(min-width: 1024px) 28vw, (min-width: 640px) 45vw, 100vw"
+          }
+          className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] motion-reduce:transition-none group-hover:scale-[1.015]"
+          style={{ objectPosition: member.imagePosition ?? "center center" }}
+        />
+      </div>
+      <div className="w-full">
+        <h3
+          className={`font-light leading-tight tracking-[0.08em] text-foreground ${
+            isLeadership ? "text-2xl md:text-3xl" : "text-xl md:text-2xl"
+          }`}
+        >
+          {member.name}
+        </h3>
+        <p className="mt-2 text-sm uppercase tracking-[0.18em] text-foreground/58">
+          {member.role}
+        </p>
+      </div>
+    </motion.article>
+  );
+};
+
+type OrganisationLogoProps = {
+  src: string;
+  alt: string;
+  className?: string;
+  sizes?: string;
+};
+
+const OrganisationLogo = ({
+  src,
+  alt,
+  className = "max-w-[15rem]",
+  sizes = "(min-width: 768px) 15rem, 12rem",
+}: OrganisationLogoProps) => (
+  <div className={`relative h-16 w-full ${className}`}>
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes={sizes}
+      className="object-contain object-center"
+    />
+  </div>
+);
+
+const CollaboratorProfile = ({ collaborator }: { collaborator: Collaborator }) => (
+  <motion.article variants={fadeUp} className="group mx-auto w-full max-w-[16.5rem] sm:mx-0">
+    <div className="relative mb-5 aspect-[4/5] overflow-hidden bg-foreground/[0.035]">
+      <Image
+        src={collaborator.portrait}
+        alt={collaborator.alt}
+        fill
+        sizes="(min-width: 1280px) 16.5rem, (min-width: 768px) 32vw, 82vw"
+        className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] motion-reduce:transition-none group-hover:scale-[1.012]"
+        style={{ objectPosition: collaborator.objectPosition ?? "center center" }}
+      />
+    </div>
+
+    <div className="w-full">
+      <h3 className="text-lg font-light uppercase leading-tight tracking-[0.08em] text-foreground md:text-xl">
+        {collaborator.name}
+      </h3>
+      <p className="mt-2 text-sm leading-relaxed tracking-wide text-foreground/62">
+        {collaborator.role}
+      </p>
+      <p className="mt-4 text-sm leading-relaxed tracking-wide text-foreground/72">
+        {collaborator.organisation}
+      </p>
+      <p className="mt-3 text-xs uppercase tracking-[0.22em] text-foreground/48">
+        {collaborator.location}
+      </p>
+    </div>
+  </motion.article>
+);
+
+const SectionMarker = ({ label }: { label: string }) => (
+  <div className="mb-10">
+    <h3 className="text-xs font-medium uppercase tracking-[0.28em] text-saffron">
+      {label}
+    </h3>
+  </div>
+);
+
+const CollaboratorsSection = () => (
+  <section className="border-t border-foreground/10 pt-8">
+    <SectionMarker label="Collaborators" />
+
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-80px" }}
+      variants={stagger}
+      className="grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 xl:grid-cols-4"
+    >
+      {collaborators.map((collaborator) => (
+        <CollaboratorProfile key={collaborator.name} collaborator={collaborator} />
+      ))}
+    </motion.div>
+  </section>
+);
+
+const CollaborationNetwork = () => (
+  <section className="border-t border-foreground/10 pt-8">
+    <SectionMarker label="Collaboration Network" />
+    <p className="mb-10 max-w-xl text-sm leading-relaxed tracking-wide text-foreground/62">
+      Independent practices and organisations connected through shared work, knowledge, and exchange.
+    </p>
+
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-80px" }}
+      variants={stagger}
+      className="grid grid-cols-1 items-center gap-x-8 gap-y-10 min-[420px]:grid-cols-2 md:grid-cols-6 xl:grid-cols-5"
+    >
+      {collaborationLogos.map((logo, index) => (
+        <motion.div
+          key={logo.name}
+          variants={fadeUp}
+          className={`flex min-h-20 items-center justify-center px-4 md:col-span-2 xl:col-span-1 ${
+            index === 3 ? "md:col-start-2 xl:col-start-auto" : ""
+          }`}
+        >
+          <OrganisationLogo
+            src={logo.image}
+            alt={logo.alt}
+            className={logo.className ?? "max-w-[13rem]"}
+            sizes="(min-width: 768px) 12rem, 42vw"
+          />
+        </motion.div>
+      ))}
+    </motion.div>
+  </section>
+);
+
+const GrandmasterProfile = ({ grandmaster }: { grandmaster: (typeof itkbaGrandmasters)[number] }) => (
+  <motion.article variants={fadeUp} className="group mx-auto w-full max-w-[18rem] md:mx-0">
+    <div className="relative mb-6 aspect-[4/5] overflow-hidden bg-foreground/[0.035]">
+      <Image
+        src={grandmaster.image}
+        alt={grandmaster.alt}
+        fill
+        sizes="(min-width: 1024px) 18rem, (min-width: 768px) 34vw, 82vw"
+        className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] motion-reduce:transition-none group-hover:scale-[1.012]"
+        style={{ objectPosition: grandmaster.objectPosition }}
+      />
+    </div>
+
+    <div className="max-w-md">
+      <h4 className="text-lg font-light uppercase leading-tight tracking-[0.08em] text-foreground md:text-xl">
+        {grandmaster.name}
+      </h4>
+      <div className="mt-4 space-y-2 text-sm leading-relaxed tracking-wide text-foreground/66">
+        <p>{grandmaster.role}</p>
+        <p>{grandmaster.position}</p>
+        {"affiliation" in grandmaster && grandmaster.affiliation && <p>{grandmaster.affiliation}</p>}
+      </div>
+      <p className="mt-5 text-xs uppercase tracking-[0.22em] text-foreground/48">
+        {grandmaster.location}
+      </p>
+    </div>
+  </motion.article>
+);
+
+const InstitutionalCollaboratorFeature = () => (
+  <section className="border-t border-foreground/10 pt-8">
+    <SectionMarker label={institutionalCollaborator.label} />
+
+    <div className="space-y-10 md:space-y-12">
+      <motion.div
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true, margin: "-80px" }}
+        variants={fadeUp}
+        className="grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,0.62fr)_minmax(0,1fr)] md:items-center md:gap-10"
+      >
+        <div>
+          <div className="relative aspect-square w-full max-w-[11.5rem]">
+            <Image
+              src={institutionalCollaborator.logo}
+              alt={institutionalCollaborator.logoAlt}
+              fill
+              sizes="(min-width: 768px) 11.5rem, 56vw"
+              className="object-contain object-left"
+            />
+          </div>
+        </div>
+
+        <div className="max-w-xl">
+          <p className="text-xs font-medium uppercase tracking-[0.28em] text-foreground/48">
+            {institutionalCollaborator.shortName}
+          </p>
+          <h3 className="mt-5 text-3xl font-light uppercase leading-tight tracking-[0.08em] text-foreground md:text-4xl">
+            Indian Taekwondo
+            <br />
+            Kick Boxing
+            <br />
+            Association
+          </h3>
+          <p className="mt-6 max-w-md text-base font-light leading-relaxed tracking-wide text-foreground/68">
+            {institutionalCollaborator.description}
+          </p>
+        </div>
+      </motion.div>
+
+      <div>
+        <p className="mb-8 text-xs font-medium uppercase tracking-[0.28em] text-saffron">
+          ITKBA Grandmasters
+        </p>
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={stagger}
+          className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-20 lg:max-w-3xl lg:gap-24"
+        >
+          {itkbaGrandmasters.map((grandmaster) => (
+            <GrandmasterProfile key={grandmaster.name} grandmaster={grandmaster} />
+          ))}
+        </motion.div>
+      </div>
+    </div>
+  </section>
+);
 
 export default function IAmPage() {
   return (
@@ -147,7 +516,9 @@ export default function IAmPage() {
             variants={fadeUp}
             className="text-4xl font-light tracking-tight text-balance md:col-span-7 md:text-6xl"
           >
-            The Collective Behind Ahamasmi
+            The Collective
+            <br />
+            Behind Ahamasmi
           </motion.h2>
           <motion.p
             initial="hidden"
@@ -162,97 +533,49 @@ export default function IAmPage() {
           </motion.p>
         </div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={stagger}
-          className="grid grid-cols-1 gap-10 lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.28fr)] lg:items-start"
-        >
-          <motion.article
-            variants={fadeUp}
-            className="group border-t border-foreground/12 pt-5 transition-transform duration-500 hover:-translate-y-1"
-          >
-            <div className="relative mb-8 aspect-[4/5] overflow-hidden bg-foreground/[0.035] transition-colors duration-500 group-hover:bg-foreground/[0.06]">
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_26%_22%,rgba(235,122,20,0.14),transparent_28%),linear-gradient(135deg,rgba(255,255,255,0.06),transparent_48%)] opacity-70" />
-              <div className="absolute inset-x-8 top-8 h-px bg-foreground/12" />
-              <div className="absolute bottom-8 left-8 top-8 w-px bg-foreground/12" />
-              <div className="absolute bottom-14 right-8 h-24 w-24 border border-foreground/10" />
-              <div className="absolute inset-x-8 bottom-8 h-px origin-left scale-x-0 bg-saffron transition-transform duration-700 group-hover:scale-x-100" />
-              <span className="absolute left-8 top-12 text-xs uppercase tracking-[0.28em] text-foreground/48">
-                01
-              </span>
-            </div>
-            <div className="grid gap-8 border-t border-foreground/10 pt-6 sm:grid-cols-[80px_minmax(0,1fr)]">
-              <span className="text-xs uppercase tracking-[0.28em] text-foreground/42">Featured</span>
-              <div>
-                <p className="text-xs uppercase tracking-[0.24em] text-saffron">{featuredTeamMember.category}</p>
-                <h3 className="mt-4 text-3xl font-light tracking-tight text-foreground transition-colors duration-500 group-hover:text-foreground md:text-4xl">
-                  {featuredTeamMember.name}
-                </h3>
-                <p className="mt-5 max-w-md text-base font-light leading-relaxed tracking-wide text-foreground/64 transition-colors duration-500 group-hover:text-foreground/78">
-                  {featuredTeamMember.description}
-                </p>
-              </div>
-            </div>
-          </motion.article>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-            {supportingTeamMembers.map((member, index) => (
-              <motion.article
-                key={member.name}
-                variants={fadeUp}
-                className="group border-t border-foreground/12 pt-5 transition-transform duration-500 hover:-translate-y-1"
-              >
-                <div className="relative mb-6 aspect-[16/10] overflow-hidden bg-foreground/[0.035] transition-colors duration-500 group-hover:bg-foreground/[0.06]">
-                  {member.pattern === "grid" && (
-                    <>
-                      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.055)_1px,transparent_1px),linear-gradient(180deg,rgba(255,255,255,0.045)_1px,transparent_1px)] bg-[size:28px_28px] opacity-70" />
-                      <div className="absolute bottom-7 left-7 right-12 h-px bg-foreground/14" />
-                    </>
-                  )}
-                  {member.pattern === "trace" && (
-                    <>
-                      <div className="absolute inset-0 bg-[linear-gradient(145deg,transparent_0%,transparent_45%,rgba(235,122,20,0.12)_46%,transparent_47%)]" />
-                      <div className="absolute left-8 top-8 h-16 w-28 border border-foreground/10" />
-                    </>
-                  )}
-                  {member.pattern === "plane" && (
-                    <>
-                      <div className="absolute inset-y-0 left-0 w-1/2 bg-foreground/[0.035]" />
-                      <div className="absolute bottom-8 left-8 h-16 w-20 border-l border-t border-foreground/12" />
-                    </>
-                  )}
-                  {member.pattern === "field" && (
-                    <>
-                      <div className="absolute left-8 top-8 h-2 w-2 rounded-full bg-saffron/50" />
-                      <div className="absolute left-12 top-9 h-px w-32 bg-foreground/14" />
-                      <div className="absolute bottom-8 right-8 h-20 w-px bg-foreground/14" />
-                    </>
-                  )}
-                  {member.pattern === "line" && (
-                    <>
-                      <div className="absolute bottom-7 left-7 right-7 h-px bg-foreground/14" />
-                      <div className="absolute bottom-7 left-7 h-20 w-px bg-foreground/14" />
-                      <div className="absolute right-8 top-8 h-16 w-16 rounded-full border border-foreground/10" />
-                    </>
-                  )}
-                  <div className="absolute inset-x-6 bottom-6 h-px origin-left scale-x-0 bg-saffron transition-transform duration-700 group-hover:scale-x-100" />
-                  <span className="absolute left-6 top-6 text-xs uppercase tracking-[0.28em] text-foreground/48">
-                    {String(index + 2).padStart(2, "0")}
-                  </span>
-                </div>
-                <p className="text-xs uppercase tracking-[0.22em] text-saffron">{member.category}</p>
-                <h3 className="mt-3 text-2xl font-light tracking-tight text-foreground transition-colors duration-500 group-hover:text-foreground">
-                  {member.name}
-                </h3>
-                <p className="mt-4 text-sm leading-relaxed tracking-wide text-foreground/62 transition-colors duration-500 group-hover:text-foreground/76">
-                  {member.description}
-                </p>
-              </motion.article>
-            ))}
+        <div className="mx-auto max-w-6xl space-y-20 md:space-y-32">
+          <div>
+            <p className="mx-auto mb-9 max-w-4xl text-xs font-medium uppercase tracking-[0.28em] text-saffron">
+              Studio Leadership
+            </p>
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              variants={stagger}
+              className="mx-auto grid max-w-4xl grid-cols-1 gap-12 md:grid-cols-2 lg:gap-24"
+            >
+              {studioLeaders.map((member) => (
+                <TeamProfile
+                  key={member.name}
+                  member={member}
+                  variant="leadership"
+                />
+              ))}
+            </motion.div>
           </div>
-        </motion.div>
+
+          <div>
+            <p className="mx-auto mb-9 max-w-4xl text-xs font-medium uppercase tracking-[0.28em] text-saffron">
+              Studio Team
+            </p>
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              variants={stagger}
+              className="mx-auto grid max-w-4xl grid-cols-1 gap-x-12 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-14 lg:gap-y-18"
+            >
+              {studioTeam.map((member) => (
+                <TeamProfile
+                  key={member.name}
+                  member={member}
+                  variant="team"
+                />
+              ))}
+            </motion.div>
+          </div>
+        </div>
       </section>
 
       <section className="border-y border-foreground/10 py-24 md:py-36">
@@ -284,43 +607,15 @@ export default function IAmPage() {
             Built Through Collaboration
           </h2>
           <p className="max-w-xl text-lg font-light leading-relaxed tracking-wide text-foreground/74 md:col-span-5 md:col-start-8 md:text-xl">
-            Architecture at Ahamasmi is shaped by many voices — designers, engineers, makers, consultants, researchers, and site teams working together to turn intention into built form.
+            Ahamasmi grows through relationships across architecture, interiors, hospitality, wellbeing, education, and martial practice. Each collaboration brings a distinct form of knowledge—expanding how we understand people, place, material, and experience.
           </p>
         </motion.div>
 
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={stagger}
-          className="grid grid-cols-1 gap-8 border-t border-foreground/10 pt-8 lg:grid-cols-3 lg:gap-0 lg:pt-0"
-        >
-          {collaborationClusters.map((cluster, index) => (
-            <motion.article
-              key={cluster.title}
-              variants={fadeUp}
-              className="group border-b border-foreground/10 pb-8 transition-all duration-500 hover:-translate-y-1 hover:border-foreground/18 hover:bg-foreground/[0.025] lg:border-b-0 lg:border-r lg:px-8 lg:py-8 lg:first:pl-0 lg:last:border-r-0 lg:last:pr-0"
-            >
-              <div className="mb-8 flex items-center justify-between gap-6">
-                <span className="text-xs uppercase tracking-[0.28em] text-foreground/42">{cluster.number}</span>
-                <div className="h-px flex-1 origin-left scale-x-75 bg-foreground/18 transition-all duration-700 group-hover:scale-x-100 group-hover:bg-saffron" />
-              </div>
-              <p className="text-xs uppercase tracking-[0.24em] text-saffron">{cluster.label}</p>
-              <h3 className="mt-5 text-3xl font-light tracking-tight text-foreground md:text-4xl">{cluster.title}</h3>
-              <p className="mt-6 text-sm leading-relaxed tracking-wide text-foreground/64 transition-colors duration-500 group-hover:text-foreground/78 lg:min-h-20">
-                {cluster.description}
-              </p>
-              <div className="mt-8 flex flex-wrap gap-x-3 gap-y-3 text-sm uppercase tracking-[0.11em] text-foreground/62">
-                {cluster.items.map((item, itemIndex) => (
-                  <span key={item} className="inline-flex items-center gap-3">
-                    <span>{item}</span>
-                    {itemIndex < cluster.items.length - 1 && <span className="text-foreground/24">/</span>}
-                  </span>
-                ))}
-              </div>
-            </motion.article>
-          ))}
-        </motion.div>
+        <div className="mx-auto max-w-6xl space-y-16 md:space-y-24">
+          <CollaboratorsSection />
+          <CollaborationNetwork />
+          <InstitutionalCollaboratorFeature />
+        </div>
       </section>
 
       <section className="container mx-auto px-6">
