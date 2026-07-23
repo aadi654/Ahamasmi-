@@ -11,7 +11,7 @@ const fadeUp: Variants = {
 
 const MAX_FILES = 5;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const WHATSAPP_NUMBER = "918762910876";
+const WHATSAPP_NUMBER = "919270384782";
 const PROJECT_TYPES = ["Residential", "Commercial", "Cultural", "Other"] as const;
 
 type ProjectType = (typeof PROJECT_TYPES)[number] | "";
@@ -209,7 +209,10 @@ Thank you.`;
               </div>
               <div>
                 <p className="text-saffron uppercase tracking-widest text-xs font-medium mb-2">Phone</p>
-                <p className="text-xl">+91 92703 84782</p>
+                <div className="space-y-1 text-xl">
+                  <p>+91 92703 84782</p>
+                  <p>+91 87629 10876</p>
+                </div>
               </div>
               <div>
                 <p className="text-saffron uppercase tracking-widest text-xs font-medium mb-2">Studio</p>
