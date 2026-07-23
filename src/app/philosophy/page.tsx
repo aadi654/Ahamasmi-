@@ -123,6 +123,15 @@ const collaborators: Collaborator[] = [
     objectPosition: "center 34%",
   },
   {
+    name: "SISIRA DISKUL",
+    role: "Founder / Design Director",
+    organisation: "9183 Design Co. Ltd.",
+    location: "Thailand",
+    portrait: "/images/collaborators/sisira-diskul.jpg",
+    alt: "Sisira Diskul, Founder and Design Director of 9183 Design Co. Ltd.",
+    objectPosition: "center 34%",
+  },
+  {
     name: "Janet Ewens",
     role: "Founder, Preventative Healthcare",
     organisation: "Babylon Health Hub",
@@ -324,10 +333,15 @@ const CollaboratorsSection = () => (
       whileInView="visible"
       viewport={{ once: true, margin: "-80px" }}
       variants={stagger}
-      className="grid grid-cols-1 gap-x-10 gap-y-12 sm:grid-cols-2 xl:grid-cols-4"
+      className="grid grid-cols-1 gap-y-12 sm:grid-cols-2 sm:gap-x-10 lg:grid-cols-6 lg:gap-x-12 lg:gap-y-18"
     >
-      {collaborators.map((collaborator) => (
-        <CollaboratorProfile key={collaborator.name} collaborator={collaborator} />
+      {collaborators.map((collaborator, index) => (
+        <div
+          key={collaborator.name}
+          className={`lg:col-span-2 ${index === 3 ? "lg:col-start-2" : ""}`}
+        >
+          <CollaboratorProfile collaborator={collaborator} />
+        </div>
       ))}
     </motion.div>
   </section>
