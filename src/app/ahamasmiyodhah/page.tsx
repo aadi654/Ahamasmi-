@@ -2,7 +2,7 @@
 
 import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { motion, useReducedMotion, Variants } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion, Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 
@@ -12,6 +12,38 @@ const fadeUp: Variants = {
 };
 
 type ActiveTab = "academy" | "design-research";
+
+type PublicationSpread = {
+  src: string;
+  alt: string;
+  label: string;
+  width: number;
+  height: number;
+};
+
+type Publication = {
+  id: string;
+  type: "article" | "feature";
+  title: string;
+  eyebrow?: string;
+  metadata?: string;
+  description: string;
+  spreads: PublicationSpread[];
+  ctaLabel: string;
+  alignment: "image-left" | "image-right";
+};
+
+type AcademyCredential = {
+  id: string;
+  title: string;
+  labelLines: string[];
+  image: string;
+  alt: string;
+  previewAlt: string;
+  width: number;
+  height: number;
+  triggerLabel: string;
+};
 
 const sections: Array<{
   id: ActiveTab;
@@ -98,13 +130,85 @@ const academyLead = {
   name: "Niket Sunil Upase",
   rank: "Black Belt, 3rd Dan",
   academy: "Deccan Taekwondo Academy",
+  federation: "World Taekwondo Federation",
   image: "/images/academy/academy-lead.jpeg",
 } as const;
 
 const academyCredential = {
-  title: "Black Belt Certification",
+  id: "itkba-black-belt",
+  title: "Black Belt Certification - ITKBA",
+  labelLines: ["BLACK BELT", "CERTIFICATION - ITKBA"],
   image: "/images/academy/black-belt-certificate.jpeg",
-} as const;
+  alt: "Preview of black belt certification",
+  previewAlt: "Full preview of Niket Sunil Upase black belt certification",
+  width: 1600,
+  height: 1200,
+  triggerLabel: "View black belt certification credential",
+} satisfies AcademyCredential;
+
+const academyCredentials = [
+  {
+    id: "kukkiwon-3rd-dan",
+    title: "Kukkiwon 3rd Dan Certification",
+    labelLines: ["KUKKIWON 3RD DAN", "CERTIFICATION"],
+    image: "/images/academy/kukkiwon-3rd-dan-certificate.jpeg",
+    alt: "Kukkiwon certificate awarded to Niket Sunil Upase for successfully completing the 3rd Dan Taekwondo promotion test.",
+    previewAlt:
+      "Kukkiwon certificate awarded to Niket Sunil Upase for successfully completing the 3rd Dan Taekwondo promotion test.",
+    width: 1087,
+    height: 1600,
+    triggerLabel: "Open Kukkiwon 3rd Dan certificate for Niket Sunil Upase",
+  },
+  academyCredential,
+] satisfies AcademyCredential[];
+
+const publications: Publication[] = [
+  {
+    id: "copper-facades-covid-spread",
+    type: "article",
+    title: "Use of Copper on Façades to Reduce COVID Spread",
+    metadata: "Material Research · Façade Design · 2020",
+    description:
+      "A published study examining copper as an architectural façade material and its relationship with hygiene, durability, ventilation, material ageing, fenestration, maintenance, and public health.",
+    spreads: [
+      {
+        src: "/images/ahamasmiyodhah/design-research/copper-facades-covid-spread-pages-26-27.jpeg",
+        label: "Pages 26–27",
+        alt: "Magazine spread titled Use of Copper on Façades to Reduce COVID Spread, showing architectural copper cladding, doors, windows, façade applications, and published research.",
+        width: 1189,
+        height: 790,
+      },
+      {
+        src: "/images/ahamasmiyodhah/design-research/facade-materials-pages-28-29.jpeg",
+        label: "Pages 28–29",
+        alt: "Continued magazine spread about copper façade materials, fenestration, ventilation, patina, maintenance, architectural applications, and author Ar. Niket Sunil Upase.",
+        width: 1017,
+        height: 670,
+      },
+    ],
+    ctaLabel: "View publication",
+    alignment: "image-left",
+  },
+  {
+    id: "cladding-cover-story",
+    type: "feature",
+    eyebrow: "Featured In",
+    title: "Cover Story: Contemporary Approaches to Cladding",
+    description:
+      "Ahamasmi Architect founder Ar. Niket Sunil Upase was featured alongside architectural practitioners discussing cladding, material expression, thermal performance, maintenance, and building-envelope design.",
+    spreads: [
+      {
+        src: "/images/ahamasmiyodhah/design-research/cladding-cover-story.jpeg",
+        label: "Cover story",
+        alt: "Magazine cover-story page featuring Ar. Niket Sunil Upase and other architects discussing cladding design.",
+        width: 733,
+        height: 840,
+      },
+    ],
+    ctaLabel: "View feature",
+    alignment: "image-right",
+  },
+];
 
 const WhatsAppIcon = () => (
   <svg
@@ -176,13 +280,14 @@ const AcademyLogoMark = ({ src, alt }: AcademyLogoMarkProps) => (
 );
 
 type CredentialLightboxProps = {
-  isOpen: boolean;
+  credential: AcademyCredential | null;
   onClose: () => void;
 };
 
-const CredentialLightbox = ({ isOpen, onClose }: CredentialLightboxProps) => {
+const CredentialLightbox = ({ credential, onClose }: CredentialLightboxProps) => {
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const dialogRef = useRef<HTMLDivElement | null>(null);
+  const isOpen = Boolean(credential);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -229,35 +334,37 @@ const CredentialLightbox = ({ isOpen, onClose }: CredentialLightboxProps) => {
     };
   }, [isOpen, onClose]);
 
-  if (!isOpen || typeof document === "undefined") return null;
+  if (!credential || typeof document === "undefined") return null;
 
   return createPortal(
     <div
       ref={dialogRef}
       role="dialog"
       aria-modal="true"
-      aria-label="Black belt certification credential preview"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 px-5 py-8 backdrop-blur-sm"
+      aria-label={`${credential.title} preview`}
+      className="fixed inset-0 z-50 overflow-y-auto bg-black/85 px-5 py-20 backdrop-blur-sm sm:px-6"
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="relative flex max-h-full w-full max-w-5xl items-center justify-center">
+      <div className="relative mx-auto flex min-h-[calc(100vh-10rem)] min-h-[calc(100dvh-10rem)] w-full max-w-5xl items-center justify-center">
         <button
           ref={closeButtonRef}
           type="button"
           onClick={onClose}
           aria-label="Close credential preview"
-          className="absolute right-0 top-0 z-10 border border-foreground/20 bg-background px-4 py-3 text-xs uppercase tracking-widest text-foreground transition-colors hover:border-saffron hover:text-saffron focus:outline-none focus:ring-2 focus:ring-saffron focus:ring-offset-2 focus:ring-offset-background"
+          className="fixed right-4 top-4 z-[60] border border-foreground/20 bg-background px-4 py-3 text-xs uppercase tracking-widest text-foreground transition-colors hover:border-saffron hover:text-saffron focus:outline-none focus:ring-2 focus:ring-saffron focus:ring-offset-2 focus:ring-offset-background md:right-6 md:top-6"
         >
           Close
         </button>
-        <AcademyImage
-          src={academyCredential.image}
-          alt="Full preview of Niket Sunil Upase black belt certification"
-          placeholderLabel="Certificate preview unavailable"
-          className="mt-16 flex aspect-[4/3] max-h-[78vh] w-full max-w-4xl items-center justify-center bg-foreground/[0.02]"
-          imageClassName="max-h-[78vh] w-full object-contain"
+        <Image
+          src={credential.image}
+          alt={credential.previewAlt}
+          width={credential.width}
+          height={credential.height}
+          unoptimized
+          sizes="(min-width: 1280px) min(90vw, 1024px), calc(100vw - 40px)"
+          className="h-auto max-h-[calc(100vh-10rem)] max-h-[calc(100dvh-10rem)] w-auto max-w-[min(90vw,1024px)] object-contain border border-foreground/10 bg-white"
         />
       </div>
     </div>,
@@ -265,13 +372,405 @@ const CredentialLightbox = ({ isOpen, onClose }: CredentialLightboxProps) => {
   );
 };
 
+type PublicationLightboxProps = {
+  publication: Publication | null;
+  spreadIndex: number;
+  onPreviousSpread: () => void;
+  onNextSpread: () => void;
+  onClose: () => void;
+  shouldReduceMotion: boolean;
+};
+
+const PublicationLightbox = ({
+  publication,
+  spreadIndex,
+  onPreviousSpread,
+  onNextSpread,
+  onClose,
+  shouldReduceMotion,
+}: PublicationLightboxProps) => {
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
+  const isOpen = Boolean(publication);
+  const spreadCount = publication?.spreads.length ?? 0;
+  const safeSpreadIndex = Math.min(Math.max(spreadIndex, 0), Math.max(spreadCount - 1, 0));
+  const spread = publication?.spreads[safeSpreadIndex];
+  const hasMultipleSpreads = spreadCount > 1;
+  const canGoPrevious = safeSpreadIndex > 0;
+  const canGoNext = safeSpreadIndex < spreadCount - 1;
+
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
+
+    const handleKeyDown = (event: globalThis.KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (event.key === "ArrowLeft" && hasMultipleSpreads) {
+        event.preventDefault();
+        if (canGoPrevious) onPreviousSpread();
+        return;
+      }
+
+      if (event.key === "ArrowRight" && hasMultipleSpreads) {
+        event.preventDefault();
+        if (canGoNext) onNextSpread();
+        return;
+      }
+
+      if (event.key !== "Tab") return;
+
+      const focusableElements = dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])',
+      );
+      const focusable = Array.from(focusableElements ?? []).filter(
+        (element) => !element.hasAttribute("disabled"),
+      );
+
+      if (focusable.length === 0) return;
+
+      const firstElement = focusable[0];
+      const lastElement = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement.focus();
+      } else if (!event.shiftKey && document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement.focus();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [
+    canGoNext,
+    canGoPrevious,
+    hasMultipleSpreads,
+    isOpen,
+    onClose,
+    onNextSpread,
+    onPreviousSpread,
+  ]);
+
+  if (!publication || !spread || typeof document === "undefined") return null;
+
+  return createPortal(
+    <AnimatePresence>
+      <motion.div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={`${publication.id}-viewer-title`}
+        className="fixed inset-0 z-[80] overflow-y-auto bg-black/90 px-4 py-20 backdrop-blur-sm sm:px-6 md:py-24"
+        initial={shouldReduceMotion ? false : { opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={shouldReduceMotion ? undefined : { opacity: 0 }}
+        transition={{ duration: 0.2, ease: [0.76, 0, 0.24, 1] }}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) onClose();
+        }}
+      >
+        <h2 id={`${publication.id}-viewer-title`} className="sr-only">
+          {publication.title}
+        </h2>
+        <button
+          ref={closeButtonRef}
+          type="button"
+          onClick={onClose}
+          aria-label="Close publication viewer"
+          className="fixed right-4 top-4 z-[90] border border-white/25 bg-black px-4 py-3 text-xs font-medium uppercase tracking-widest text-white transition-colors hover:border-saffron hover:text-saffron focus:outline-none focus:ring-2 focus:ring-saffron focus:ring-offset-2 focus:ring-offset-black md:right-6 md:top-6"
+        >
+          Close
+        </button>
+        <motion.div
+          className="mx-auto flex min-h-[calc(100vh-10rem)] w-full flex-col items-center justify-start"
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={shouldReduceMotion ? undefined : { opacity: 0, y: 10 }}
+          transition={{ duration: 0.25, ease: [0.76, 0, 0.24, 1] }}
+        >
+          <div className="w-full max-w-[1120px]">
+            <AnimatePresence mode={shouldReduceMotion ? "sync" : "wait"}>
+              <motion.div
+                key={spread.src}
+                initial={shouldReduceMotion ? false : { opacity: 0, x: 10 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={shouldReduceMotion ? undefined : { opacity: 0, x: -10 }}
+                transition={{ duration: 0.18, ease: [0.76, 0, 0.24, 1] }}
+                className="w-full"
+              >
+                <Image
+                  src={spread.src}
+                  alt={spread.alt}
+                  width={spread.width}
+                  height={spread.height}
+                  unoptimized
+                  sizes="(min-width: 1280px) 1120px, calc(100vw - 32px)"
+                  className="h-auto w-full border border-white/10 bg-white"
+                />
+              </motion.div>
+            </AnimatePresence>
+
+            {hasMultipleSpreads && (
+              <div className="mt-5 flex w-full flex-wrap items-center justify-between gap-4 text-xs font-medium uppercase tracking-[0.2em] text-white">
+                <button
+                  type="button"
+                  onClick={onPreviousSpread}
+                  disabled={!canGoPrevious}
+                  aria-label="Show previous publication spread"
+                  className="min-h-11 text-left transition-colors hover:text-saffron focus:outline-none focus-visible:text-saffron disabled:cursor-not-allowed disabled:text-white/35"
+                >
+                  ← Previous
+                </button>
+                <span
+                  className="text-saffron"
+                  aria-label={`Image ${safeSpreadIndex + 1} of ${spreadCount}`}
+                  aria-live="polite"
+                >
+                  {`${safeSpreadIndex + 1} / ${spreadCount}`}
+                </span>
+                <button
+                  type="button"
+                  onClick={onNextSpread}
+                  disabled={!canGoNext}
+                  aria-label="Show next publication spread"
+                  className="min-h-11 text-right transition-colors hover:text-saffron focus:outline-none focus-visible:text-saffron disabled:cursor-not-allowed disabled:text-white/35"
+                >
+                  Next →
+                </button>
+              </div>
+            )}
+          </div>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>,
+    document.body,
+  );
+};
+
+type PublicationFeatureProps = {
+  publication: Publication;
+  onOpen: (publication: Publication, spreadIndex: number, trigger: HTMLElement) => void;
+  shouldReduceMotion: boolean;
+};
+
+const PublicationFeature = ({
+  publication,
+  onOpen,
+  shouldReduceMotion,
+}: PublicationFeatureProps) => {
+  const [currentSpreadIndex, setCurrentSpreadIndex] = useState(0);
+  const isImageLeft = publication.alignment === "image-left";
+  const isFeature = publication.type === "feature";
+  const currentSpread = publication.spreads[currentSpreadIndex] ?? publication.spreads[0];
+  const hasMultipleSpreads = publication.spreads.length > 1;
+  const canGoPrevious = currentSpreadIndex > 0;
+  const canGoNext = currentSpreadIndex < publication.spreads.length - 1;
+  const mediaDesktopOrder = isImageLeft ? "lg:order-1" : "lg:order-2";
+  const copyDesktopOrder = isImageLeft ? "lg:order-2" : "lg:order-1";
+  const gridClass = isFeature
+    ? "lg:grid-cols-[minmax(0,0.48fr)_minmax(0,0.52fr)]"
+    : isImageLeft
+      ? "lg:grid-cols-[minmax(0,0.66fr)_minmax(18rem,0.34fr)]"
+      : "lg:grid-cols-[minmax(18rem,0.34fr)_minmax(0,0.66fr)]";
+  const imageSizes = isFeature
+    ? "(min-width: 1024px) 48vw, 100vw"
+    : "(min-width: 1024px) 66vw, 100vw";
+
+  const goToPreviousSpread = () => {
+    setCurrentSpreadIndex((current) => Math.max(current - 1, 0));
+  };
+
+  const goToNextSpread = () => {
+    setCurrentSpreadIndex((current) => Math.min(current + 1, publication.spreads.length - 1));
+  };
+
+  return (
+    <motion.article
+      aria-labelledby={`${publication.id}-title`}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-12% 0px" }}
+      transition={{ duration: 0.55, ease: [0.76, 0, 0.24, 1] }}
+      className={`grid grid-cols-1 gap-8 border-t border-foreground/10 pt-10 md:gap-10 lg:items-center lg:gap-14 ${gridClass}`}
+    >
+      <div className={`order-1 max-w-xl ${copyDesktopOrder} ${isFeature ? "lg:max-w-lg" : ""}`}>
+        {publication.eyebrow && (
+          <div className="mb-5 text-xs font-medium uppercase tracking-[0.22em] text-saffron">
+            {publication.eyebrow}
+          </div>
+        )}
+        <h3
+          id={`${publication.id}-title`}
+          className="text-2xl font-light leading-tight tracking-tight text-foreground md:text-4xl"
+        >
+          {publication.title}
+        </h3>
+        {publication.metadata && (
+          <p className="mt-5 text-xs font-medium uppercase leading-relaxed tracking-[0.2em] text-muted">
+            {publication.metadata}
+          </p>
+        )}
+        <p className="mt-6 max-w-[62ch] text-base leading-relaxed tracking-wide text-muted md:text-lg">
+          {publication.description}
+        </p>
+        <button
+          type="button"
+          onClick={(event) => onOpen(publication, currentSpreadIndex, event.currentTarget)}
+          className="group mt-8 hidden items-center gap-3 text-sm font-medium uppercase tracking-widest text-foreground transition-colors hover:text-saffron focus:outline-none focus-visible:text-saffron lg:inline-flex"
+        >
+          {publication.ctaLabel}
+          <ArrowRight
+            size={16}
+            className="transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1 motion-reduce:transition-none"
+          />
+        </button>
+      </div>
+
+      <div className={`order-2 ${mediaDesktopOrder}`}>
+        <button
+          type="button"
+          onClick={(event) => onOpen(publication, currentSpreadIndex, event.currentTarget)}
+          aria-label={`Open ${publication.title}, ${currentSpread.label.toLowerCase()}`}
+          className="group block w-full overflow-hidden border border-foreground/10 bg-white text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        >
+          <AnimatePresence mode={shouldReduceMotion ? "sync" : "wait"}>
+            <motion.div
+              key={currentSpread.src}
+              initial={shouldReduceMotion ? false : { opacity: 0, x: 8 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={shouldReduceMotion ? undefined : { opacity: 0, x: -8 }}
+              transition={{ duration: 0.18, ease: [0.76, 0, 0.24, 1] }}
+            >
+              <Image
+                src={currentSpread.src}
+                alt={currentSpread.alt}
+                width={currentSpread.width}
+                height={currentSpread.height}
+                unoptimized
+                sizes={imageSizes}
+                className="h-auto w-full transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:scale-[1.012] motion-reduce:transition-none"
+              />
+            </motion.div>
+          </AnimatePresence>
+        </button>
+
+        {hasMultipleSpreads && (
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-x-5 gap-y-3 text-xs font-medium uppercase tracking-[0.2em]">
+            <button
+              type="button"
+              onClick={goToPreviousSpread}
+              disabled={!canGoPrevious}
+              aria-label="Show previous publication spread"
+              className="min-h-11 text-foreground transition-colors hover:text-saffron focus:outline-none focus-visible:text-saffron disabled:cursor-not-allowed disabled:text-muted/45"
+            >
+              ← Previous
+            </button>
+            <span
+              className="text-saffron"
+              aria-label={`Image ${currentSpreadIndex + 1} of ${publication.spreads.length}`}
+              aria-live="polite"
+            >
+              {`${currentSpreadIndex + 1} / ${publication.spreads.length}`}
+            </span>
+            <button
+              type="button"
+              onClick={goToNextSpread}
+              disabled={!canGoNext}
+              aria-label="Show next publication spread"
+              className="min-h-11 text-foreground transition-colors hover:text-saffron focus:outline-none focus-visible:text-saffron disabled:cursor-not-allowed disabled:text-muted/45"
+            >
+              Next →
+            </button>
+          </div>
+        )}
+      </div>
+
+      <button
+        type="button"
+        onClick={(event) => onOpen(publication, currentSpreadIndex, event.currentTarget)}
+        className="group order-3 inline-flex items-center gap-3 justify-self-start text-sm font-medium uppercase tracking-widest text-foreground transition-colors hover:text-saffron focus:outline-none focus-visible:text-saffron lg:hidden"
+      >
+        {publication.ctaLabel}
+        <ArrowRight
+          size={16}
+          className="transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1 motion-reduce:transition-none"
+        />
+      </button>
+    </motion.article>
+  );
+};
+
+type SelectedPublicationsProps = {
+  onOpen: (publication: Publication, spreadIndex: number, trigger: HTMLElement) => void;
+  shouldReduceMotion: boolean;
+};
+
+const SelectedPublications = ({ onOpen, shouldReduceMotion }: SelectedPublicationsProps) => (
+  <section aria-labelledby="selected-publications-heading" className="mt-20 md:mt-28">
+    <div className="mb-14 max-w-3xl md:mb-18">
+      <span className="mb-5 block text-xs font-medium uppercase tracking-widest text-saffron">
+        Selected Publications
+      </span>
+      <h2
+        id="selected-publications-heading"
+        className="text-3xl font-light leading-tight tracking-tight text-foreground md:text-5xl"
+      >
+        Research made visible.
+      </h2>
+      <p className="mt-6 max-w-2xl text-base leading-relaxed tracking-wide text-muted md:text-lg">
+        Essays, material studies, and published conversations exploring architecture,
+        façades, health, culture, and the built environment.
+      </p>
+    </div>
+
+    <div className="space-y-16 md:space-y-24">
+      {publications.map((publication) => (
+        <PublicationFeature
+          key={publication.id}
+          publication={publication}
+          onOpen={onOpen}
+          shouldReduceMotion={shouldReduceMotion}
+        />
+      ))}
+    </div>
+
+    <div className="mt-16 border-t border-foreground/10 pt-8 md:mt-24">
+      <p className="text-xs font-medium uppercase tracking-[0.22em] text-saffron">
+        Research Themes
+      </p>
+      <p className="mt-4 text-base leading-relaxed tracking-wide text-foreground md:text-lg">
+        Materiality / Façades / Health / Culture / Education
+      </p>
+    </div>
+  </section>
+);
+
 const AcademyCredentials = () => {
-  const [isCredentialOpen, setIsCredentialOpen] = useState(false);
+  const [selectedCredential, setSelectedCredential] = useState<AcademyCredential | null>(null);
   const credentialTriggerRef = useRef<HTMLButtonElement | null>(null);
 
+  const openCredential = (credential: AcademyCredential, trigger: HTMLButtonElement) => {
+    credentialTriggerRef.current = trigger;
+    setSelectedCredential(credential);
+  };
+
   const closeCredential = () => {
-    setIsCredentialOpen(false);
-    window.requestAnimationFrame(() => credentialTriggerRef.current?.focus());
+    const trigger = credentialTriggerRef.current;
+    setSelectedCredential(null);
+    window.requestAnimationFrame(() => trigger?.focus());
   };
 
   return (
@@ -297,46 +796,65 @@ const AcademyCredentials = () => {
 
         <section className="border-t border-foreground/10 pt-10">
           <h3 className="mb-6 text-xs font-medium uppercase tracking-widest text-saffron">Academy Lead</h3>
-          <div className="grid grid-cols-1 gap-7 sm:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] sm:items-start">
-            <div className="min-w-0">
-              <AcademyImage
-                src={academyLead.image}
-                alt="Portrait of Academy lead Niket Sunil Upase"
-                placeholderLabel="Academy lead portrait unavailable"
-                className="aspect-[4/5]"
-                imageClassName="h-full w-full object-contain"
-              />
+          <div className="grid grid-cols-1 gap-10 xl:grid-cols-[minmax(12rem,0.38fr)_minmax(18rem,0.52fr)] xl:items-start xl:gap-12">
+            <div className="min-w-0 max-w-[17rem] lg:max-w-none">
+              <div className="w-full max-w-[14rem]">
+                <AcademyImage
+                  src={academyLead.image}
+                  alt="Portrait of Academy lead Niket Sunil Upase"
+                  placeholderLabel="Academy lead portrait unavailable"
+                  className="aspect-[4/5]"
+                  imageClassName="h-full w-full object-contain"
+                />
+              </div>
               <div className="mt-6">
                 <p className="text-sm font-medium uppercase tracking-[0.2em] text-foreground">
                   {academyLead.name}
                 </p>
                 <p className="mt-2 text-sm leading-relaxed text-muted">{academyLead.rank}</p>
                 <p className="text-sm leading-relaxed text-muted">{academyLead.academy}</p>
+                <p className="text-sm leading-relaxed text-muted">{academyLead.federation}</p>
               </div>
             </div>
 
-            <button
-              ref={credentialTriggerRef}
-              type="button"
-              onClick={() => setIsCredentialOpen(true)}
-              className="block min-w-0 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 focus-visible:ring-offset-background"
-              aria-label="View black belt certification credential"
-            >
-              <AcademyImage
-                src={academyCredential.image}
-                alt="Preview of black belt certification"
-                placeholderLabel="Certificate preview unavailable"
-                className="aspect-[4/3] border border-foreground/10 bg-foreground/[0.02]"
-                imageClassName="h-full w-full object-contain"
-              />
-              <p className="mt-5 text-sm font-medium uppercase tracking-[0.18em] text-foreground">
-                {academyCredential.title}
-              </p>
-            </button>
+            <div className="flex min-w-0 max-w-[24rem] flex-col gap-10">
+              {academyCredentials.map((credential) => (
+                <button
+                  key={credential.id}
+                  type="button"
+                  onClick={(event) => openCredential(credential, event.currentTarget)}
+                  className={`block min-w-0 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-saffron focus-visible:ring-offset-2 focus-visible:ring-offset-background ${
+                    credential.id === "kukkiwon-3rd-dan" ? "w-full max-w-[14rem]" : "w-full"
+                  }`}
+                  aria-label={credential.triggerLabel}
+                >
+                  <div
+                    className="relative w-full border border-foreground/10 bg-foreground/[0.02]"
+                    style={{ aspectRatio: `${credential.width} / ${credential.height}` }}
+                  >
+                    <Image
+                      src={credential.image}
+                      alt={credential.alt}
+                      fill
+                      unoptimized
+                      sizes="(min-width: 1280px) 14vw, (min-width: 1024px) 18vw, (min-width: 640px) 42vw, 100vw"
+                      className="object-contain"
+                    />
+                  </div>
+                  <p className="mt-5 text-sm font-medium uppercase tracking-[0.18em] text-foreground">
+                    {credential.labelLines.map((line) => (
+                      <span key={line} className="block">
+                        {line}
+                      </span>
+                    ))}
+                  </p>
+                </button>
+              ))}
+            </div>
           </div>
         </section>
 
-        <CredentialLightbox isOpen={isCredentialOpen} onClose={closeCredential} />
+        <CredentialLightbox credential={selectedCredential} onClose={closeCredential} />
       </div>
     </aside>
   );
@@ -346,6 +864,9 @@ export default function AhamasmiyodhahPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("academy");
   const [formData, setFormData] = useState<AcademyFormData>(initialAcademyFormData);
   const [errors, setErrors] = useState<FormErrors>({});
+  const [selectedPublication, setSelectedPublication] = useState<Publication | null>(null);
+  const [selectedPublicationSpreadIndex, setSelectedPublicationSpreadIndex] = useState(0);
+  const publicationTriggerRef = useRef<HTMLElement | null>(null);
   const tabRefs = useRef<Record<ActiveTab, HTMLButtonElement | null>>({
     academy: null,
     "design-research": null,
@@ -398,6 +919,35 @@ export default function AhamasmiyodhahPage() {
 
   const selectTab = (tab: ActiveTab) => {
     setActiveTab(tab);
+  };
+
+  const openPublication = (publication: Publication, spreadIndex: number, trigger: HTMLElement) => {
+    publicationTriggerRef.current = trigger;
+    setSelectedPublicationSpreadIndex(
+      Math.min(Math.max(spreadIndex, 0), publication.spreads.length - 1),
+    );
+    setSelectedPublication(publication);
+  };
+
+  const closePublication = () => {
+    const trigger = publicationTriggerRef.current;
+    setSelectedPublication(null);
+    window.requestAnimationFrame(() => {
+      trigger?.focus();
+      window.setTimeout(() => trigger?.focus(), 0);
+    });
+  };
+
+  const showPreviousPublicationSpread = () => {
+    setSelectedPublicationSpreadIndex((current) => Math.max(current - 1, 0));
+  };
+
+  const showNextPublicationSpread = () => {
+    setSelectedPublicationSpreadIndex((current) =>
+      selectedPublication
+        ? Math.min(current + 1, selectedPublication.spreads.length - 1)
+        : current,
+    );
   };
 
   const handleTabKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
@@ -502,7 +1052,7 @@ Comment: ${formData.comment.trim() || "Not specified"}`;
             transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
           >
             {activeTab === "academy" ? (
-              <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(420px,1fr)] lg:items-start lg:gap-x-14 xl:grid-cols-[minmax(0,1.25fr)_minmax(500px,1.05fr)] xl:gap-x-16">
+              <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(420px,1fr)] lg:items-start lg:gap-x-14 xl:grid-cols-[minmax(0,1fr)_minmax(640px,1.1fr)] xl:gap-x-16">
                 <div className="min-w-0 max-w-3xl">
                   <span className="text-saffron uppercase tracking-widest text-xs font-medium mb-5 block">
                     {activeSection.eyebrow}
@@ -772,23 +1322,42 @@ Comment: ${formData.comment.trim() || "Not specified"}`;
                 <AcademyCredentials />
               </div>
             ) : (
-              <div className="max-w-4xl">
-                <span className="text-saffron uppercase tracking-widest text-xs font-medium mb-5 block">
-                  {activeSection.eyebrow}
-                </span>
-                <h2 className="text-3xl md:text-5xl font-light tracking-tight leading-tight mb-8 whitespace-pre-line">
-                  {activeSection.title}
-                </h2>
-                <div className="space-y-5 text-muted leading-relaxed tracking-wide text-lg max-w-2xl">
-                  {activeSection.body.map((paragraph) => (
-                    <p key={paragraph}>{paragraph}</p>
-                  ))}
+              <div>
+                <div className="max-w-4xl">
+                  <span className="text-saffron uppercase tracking-widest text-xs font-medium mb-5 block">
+                    {activeSection.eyebrow}
+                  </span>
+                  <h2 className="text-3xl md:text-5xl font-light tracking-tight leading-tight mb-8 whitespace-pre-line">
+                    {activeSection.title}
+                  </h2>
+                  <div className="space-y-5 text-muted leading-relaxed tracking-wide text-lg max-w-2xl">
+                    {activeSection.body.map((paragraph) => (
+                      <p key={paragraph}>{paragraph}</p>
+                    ))}
+                    <p>
+                      Alongside its exploration of movement and pedagogy, Ahamasmiyodhah
+                      documents architectural inquiry through material studies, published
+                      writing, and conversations around the built environment.
+                    </p>
+                  </div>
                 </div>
+                <SelectedPublications
+                  onOpen={openPublication}
+                  shouldReduceMotion={Boolean(shouldReduceMotion)}
+                />
               </div>
             )}
           </motion.section>
         </div>
       </section>
+      <PublicationLightbox
+        publication={selectedPublication}
+        spreadIndex={selectedPublicationSpreadIndex}
+        onPreviousSpread={showPreviousPublicationSpread}
+        onNextSpread={showNextPublicationSpread}
+        onClose={closePublication}
+        shouldReduceMotion={Boolean(shouldReduceMotion)}
+      />
     </div>
   );
 }
