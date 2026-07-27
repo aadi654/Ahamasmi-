@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
+import { ProtectedImage } from "@/components/protected-image";
 import {
   getAllProjects,
   getProjectsByCategory,
@@ -143,7 +143,7 @@ export default function ProjectsPage() {
                 >
                   <Link href={`/projects/${project.slug}`} className="block">
                     <div className={`relative ${getProjectCardAspectClass(project, idx)} overflow-hidden bg-muted/20`}>
-                      <Image
+                      <ProtectedImage
                         src={project.coverImage}
                         alt={project.coverAlt || project.title}
                         fill

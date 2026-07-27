@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion, Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { ProtectedImage } from "@/components/protected-image";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 40 },
@@ -243,7 +244,7 @@ const AcademyImage = ({
   return (
     <div className={`relative overflow-hidden ${hasImageError ? placeholderClassName : ""} ${className}`}>
       {!hasImageError ? (
-        <Image
+        <ProtectedImage
           src={src}
           alt={alt}
           fill
@@ -357,7 +358,7 @@ const CredentialLightbox = ({ credential, onClose }: CredentialLightboxProps) =>
         >
           Close
         </button>
-        <Image
+        <ProtectedImage
           src={credential.image}
           alt={credential.previewAlt}
           width={credential.width}
@@ -511,14 +512,15 @@ const PublicationLightbox = ({
                 transition={{ duration: 0.18, ease: [0.76, 0, 0.24, 1] }}
                 className="w-full"
               >
-                <Image
+                <ProtectedImage
                   src={spread.src}
                   alt={spread.alt}
                   width={spread.width}
                   height={spread.height}
                   unoptimized
                   sizes="(min-width: 1280px) 1120px, calc(100vw - 32px)"
-                  className="h-auto w-full border border-white/10 bg-white"
+                  wrapperClassName="block w-full"
+                  className="h-auto w-full object-contain border border-white/10 bg-white"
                 />
               </motion.div>
             </AnimatePresence>
@@ -654,14 +656,15 @@ const PublicationFeature = ({
               exit={shouldReduceMotion ? undefined : { opacity: 0, x: -8 }}
               transition={{ duration: 0.18, ease: [0.76, 0, 0.24, 1] }}
             >
-              <Image
+              <ProtectedImage
                 src={currentSpread.src}
                 alt={currentSpread.alt}
                 width={currentSpread.width}
                 height={currentSpread.height}
                 unoptimized
                 sizes={imageSizes}
-                className="h-auto w-full transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:scale-[1.012] motion-reduce:transition-none"
+                wrapperClassName="block w-full"
+                className="h-auto w-full object-contain transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] group-hover:scale-[1.012] motion-reduce:transition-none"
               />
             </motion.div>
           </AnimatePresence>
@@ -832,7 +835,7 @@ const AcademyCredentials = () => {
                     className="relative w-full border border-foreground/10 bg-foreground/[0.02]"
                     style={{ aspectRatio: `${credential.width} / ${credential.height}` }}
                   >
-                    <Image
+                    <ProtectedImage
                       src={credential.image}
                       alt={credential.alt}
                       fill

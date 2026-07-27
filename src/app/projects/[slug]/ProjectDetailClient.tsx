@@ -1,10 +1,10 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform, Variants } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { ProtectedImage } from "@/components/protected-image";
 import {
   getNextProject,
   Project,
@@ -99,7 +99,7 @@ function EditorialImage({
       className={`group overflow-hidden ${className}`}
     >
       {hasDimensions ? (
-        <Image
+        <ProtectedImage
           src={image.src}
           alt={alt}
           width={image.width}
@@ -110,7 +110,7 @@ function EditorialImage({
           className={`object-contain transition-transform duration-700 ease-out ${imageClassName}`}
         />
       ) : (
-        <Image
+        <ProtectedImage
           src={image.src}
           alt={alt}
           fill
@@ -189,7 +189,7 @@ function PinnedHorizontalGallery({
             {images.map((img, idx) => (
               <div key={img.src} className={`group relative flex shrink-0 items-center justify-center ${img.width && img.height ? "h-fit w-fit overflow-visible" : "h-[76vh] w-[78vw] overflow-hidden"}`}>
                 {img.width && img.height ? (
-                  <Image
+                  <ProtectedImage
                     src={img.src}
                     alt={img.alt || `${title} gallery ${idx + 1}`}
                     width={img.width}
@@ -200,7 +200,7 @@ function PinnedHorizontalGallery({
                     className="max-h-[76vh] max-w-[86vw] object-contain transition-transform duration-700 ease-out"
                   />
                 ) : (
-                  <Image
+                  <ProtectedImage
                     src={img.src}
                     alt={img.alt || `${title} gallery ${idx + 1}`}
                     fill

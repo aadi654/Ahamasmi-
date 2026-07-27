@@ -5,6 +5,7 @@ import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { getFeaturedProjects } from "@/content/projects";
+import { ProtectedImage } from "@/components/protected-image";
 
 const MotionLink = motion.create(Link);
 
@@ -129,7 +130,7 @@ export default function Home() {
               className={`group block ${index === 0 ? "mt-0 md:mt-24" : ""}`}
             >
               <div className={`relative ${index === 0 ? "aspect-[4/5]" : "aspect-[3/4]"} overflow-hidden bg-muted/20`}>
-                <Image
+                <ProtectedImage
                   src={project.coverImage}
                   alt={project.coverAlt || project.title}
                   fill

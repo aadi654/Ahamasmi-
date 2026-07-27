@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import { ProtectedImage } from "@/components/protected-image";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 40 },
@@ -233,7 +234,7 @@ const TeamProfile = ({ member, variant }: TeamProfileProps) => {
           isLeadership ? "mb-5 aspect-[4/5]" : "mb-4 aspect-[4/5]"
         }`}
       >
-        <Image
+        <ProtectedImage
           src={member.image}
           alt={member.alt}
           fill
@@ -289,7 +290,7 @@ const OrganisationLogo = ({
 const CollaboratorProfile = ({ collaborator }: { collaborator: Collaborator }) => (
   <motion.article variants={fadeUp} className="group mx-auto w-full max-w-[16.5rem] sm:mx-0">
     <div className="relative mb-5 aspect-[4/5] overflow-hidden bg-foreground/[0.035]">
-      <Image
+      <ProtectedImage
         src={collaborator.portrait}
         alt={collaborator.alt}
         fill
@@ -384,7 +385,7 @@ const CollaborationNetwork = () => (
 const GrandmasterProfile = ({ grandmaster }: { grandmaster: (typeof itkbaGrandmasters)[number] }) => (
   <motion.article variants={fadeUp} className="group mx-auto w-full max-w-[18rem] md:mx-0">
     <div className="relative mb-6 aspect-[4/5] overflow-hidden bg-foreground/[0.035]">
-      <Image
+      <ProtectedImage
         src={grandmaster.image}
         alt={grandmaster.alt}
         fill
