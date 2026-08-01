@@ -74,10 +74,13 @@ export function Navbar() {
       : activeSubmenu === "ahamasmiyodhah"
         ? aySubmenuLinks
         : [];
+  const isHomePage = pathname === "/";
   const isActiveLink = (href: string) => (href === "/" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`));
-  const getLinkTextClass = (href: string) => (isActiveLink(href) ? "text-saffron" : textColorClass);
-  const getUnderlineClass = (href: string) => (isActiveLink(href) ? "w-full" : "w-0 group-hover:w-full");
-  const getMobileLinkTextClass = (href: string) => (isActiveLink(href) ? "text-saffron" : "text-foreground");
+  const showPersistentActiveState = (href: string) => isActiveLink(href) && !isHomePage;
+  const getLinkTextClass = (href: string) => (showPersistentActiveState(href) ? "text-saffron" : textColorClass);
+  const getUnderlineClass = (href: string) => (showPersistentActiveState(href) ? "w-full" : "w-0 group-hover:w-full");
+  const getMobileLinkTextClass = (href: string) => (showPersistentActiveState(href) ? "text-saffron" : "text-foreground");
+  const getMobileUnderlineClass = (href: string) => (showPersistentActiveState(href) ? "w-[calc(100%-2rem)]" : "w-0 group-hover:w-[calc(100%-2rem)]");
   const updateSubmenuPosition = (element: HTMLElement) => {
     const rect = element.getBoundingClientRect();
     setActiveSubmenuLeft(rect.left + rect.width / 2);
@@ -236,9 +239,10 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     onClick={closeMobileMenu}
-                    className={`pointer-events-auto block min-h-12 px-4 text-4xl sm:text-5xl ${link.label === "I AM" ? "tracking-[0.14em]" : "tracking-wide"} ${getMobileLinkTextClass(link.href)} hover:text-saffron focus:outline-none focus:text-saffron transition-colors duration-300`}
+                    className={`group pointer-events-auto relative inline-flex min-h-12 items-center justify-center px-4 text-4xl sm:text-5xl ${link.label === "I AM" ? "tracking-[0.14em]" : "tracking-wide"} ${getMobileLinkTextClass(link.href)} hover:text-saffron focus:outline-none focus:text-saffron transition-colors duration-300`}
                   >
                     {link.label}
+                    <span className={`absolute bottom-0 left-1/2 h-[1px] -translate-x-1/2 bg-saffron transition-all duration-300 ${getMobileUnderlineClass(link.href)}`} />
                   </Link>
                 </motion.div>
               ))}
