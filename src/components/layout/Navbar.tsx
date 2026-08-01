@@ -10,7 +10,7 @@ const links = [
   { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/ahamasmiyodhah", label: "Ahamasmiyodhah" },
-  { href: "/philosophy", label: "I AM" },
+  { href: "/i-am", label: "I AM" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -74,6 +74,10 @@ export function Navbar() {
       : activeSubmenu === "ahamasmiyodhah"
         ? aySubmenuLinks
         : [];
+  const isActiveLink = (href: string) => (href === "/" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`));
+  const getLinkTextClass = (href: string) => (isActiveLink(href) ? "text-saffron" : textColorClass);
+  const getUnderlineClass = (href: string) => (isActiveLink(href) ? "w-full" : "w-0 group-hover:w-full");
+  const getMobileLinkTextClass = (href: string) => (isActiveLink(href) ? "text-saffron" : "text-foreground");
   const updateSubmenuPosition = (element: HTMLElement) => {
     const rect = element.getBoundingClientRect();
     setActiveSubmenuLeft(rect.left + rect.width / 2);
@@ -119,10 +123,10 @@ export function Navbar() {
               >
                 <Link
                   href={link.href}
-                  className={`text-lg tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
+                  className={`text-lg tracking-wide transition-colors duration-300 relative group ${getLinkTextClass(link.href)} hover:text-saffron`}
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-saffron transition-all duration-300 group-hover:w-full" />
+                  <span className={`absolute -bottom-1 left-0 h-[1px] bg-saffron transition-all duration-300 ${getUnderlineClass(link.href)}`} />
                 </Link>
               </div>
             ) : link.label === "Ahamasmiyodhah" ? (
@@ -142,10 +146,10 @@ export function Navbar() {
               >
                 <Link
                   href={link.href}
-                  className={`text-lg tracking-wide transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
+                  className={`text-lg tracking-wide transition-colors duration-300 relative group ${getLinkTextClass(link.href)} hover:text-saffron`}
                 >
                   {link.label}
-                  <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-saffron transition-all duration-300 group-hover:w-full" />
+                  <span className={`absolute -bottom-1 left-0 h-[1px] bg-saffron transition-all duration-300 ${getUnderlineClass(link.href)}`} />
                 </Link>
               </div>
             ) : (
@@ -160,10 +164,10 @@ export function Navbar() {
                   setActiveSubmenu(null);
                   setActiveSubmenuLeft(null);
                 }}
-                className={`text-lg ${link.label === "I AM" ? "tracking-[0.14em]" : "tracking-wide"} transition-colors duration-300 relative group ${textColorClass} hover:text-saffron`}
+                className={`text-lg ${link.label === "I AM" ? "tracking-[0.14em]" : "tracking-wide"} transition-colors duration-300 relative group ${getLinkTextClass(link.href)} hover:text-saffron`}
               >
                 {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-[1px] bg-saffron transition-all duration-300 group-hover:w-full" />
+                <span className={`absolute -bottom-1 left-0 h-[1px] bg-saffron transition-all duration-300 ${getUnderlineClass(link.href)}`} />
               </Link>
             )
           ))}
@@ -232,7 +236,7 @@ export function Navbar() {
                   <Link
                     href={link.href}
                     onClick={closeMobileMenu}
-                    className={`pointer-events-auto block min-h-12 px-4 text-4xl sm:text-5xl ${link.label === "I AM" ? "tracking-[0.14em]" : "tracking-wide"} hover:text-saffron focus:outline-none focus:text-saffron transition-colors duration-300`}
+                    className={`pointer-events-auto block min-h-12 px-4 text-4xl sm:text-5xl ${link.label === "I AM" ? "tracking-[0.14em]" : "tracking-wide"} ${getMobileLinkTextClass(link.href)} hover:text-saffron focus:outline-none focus:text-saffron transition-colors duration-300`}
                   >
                     {link.label}
                   </Link>

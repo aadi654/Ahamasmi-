@@ -192,27 +192,67 @@ const institutionalCollaborator = {
   description: "Part of Ahamasmi’s martial arts and educational network.",
 };
 
-const itkbaGrandmasters = [
+type GrandmasterProfileData = {
+  name: string;
+  details: string[];
+  location?: string;
+  image: string;
+  alt: string;
+  objectPosition: string;
+};
+
+type GrandmasterGroup = {
+  heading: string;
+  profiles: GrandmasterProfileData[];
+};
+
+const grandmasterGroups: GrandmasterGroup[] = [
   {
-    name: "SHREE SANTOSH CHAVARE",
-    role: "Grandmaster, Indian Taekwondo Kick Boxing Association",
-    position: "President, School of Chota Commandos",
-    location: "Solapur, Maharashtra",
-    image: "/images/collaborators/santosh-chavare.jpg",
-    alt: "Shree Santosh Chavare",
-    objectPosition: "center 28%",
+    heading: "ITKBA Grandmasters",
+    profiles: [
+      {
+        name: "SHREE SANTOSH CHAVARE",
+        details: [
+          "Grandmaster, Indian Taekwondo Kick Boxing Association",
+          "President, School of Chota Commandos",
+        ],
+        location: "Solapur, Maharashtra",
+        image: "/images/collaborators/santosh-chavare.jpg",
+        alt: "Shree Santosh Chavare",
+        objectPosition: "center 28%",
+      },
+      {
+        name: "SHREE ULHAAS CHAVARE",
+        details: [
+          "Secretary and Chief Instructor, Indian Taekwondo Kick Boxing Association",
+          "Chief Instructor, School of Chota Commandos",
+          "Sai Sham Lodge and Restaurant",
+        ],
+        location: "Solapur, Maharashtra",
+        image: "/images/collaborators/ulhaas-chavare.jpg",
+        alt: "Shree Ulhaas Chavare",
+        objectPosition: "center 24%",
+      },
+    ],
   },
   {
-    name: "SHREE ULHAAS CHAVARE",
-    role: "Secretary and Chief Instructor, Indian Taekwondo Kick Boxing Association",
-    position: "Chief Instructor, School of Chota Commandos",
-    affiliation: "Sai Sham Lodge and Restaurant",
-    location: "Solapur, Maharashtra",
-    image: "/images/collaborators/ulhaas-chavare.jpg",
-    alt: "Shree Ulhaas Chavare",
-    objectPosition: "center 24%",
+    heading: "Deccan Taekwondo Academy",
+    profiles: [
+      {
+        name: "SHREE MUTHAPPA HL",
+        details: [
+          "Grandmaster, Deccan Taekwondo Academy",
+          "7th Dan Black Belt",
+          "World Taekwondo Federation",
+          "Kukkiwon Taekwondo Headquarters",
+        ],
+        image: "/images/collaborators/muthappa-hl.png",
+        alt: "Shree Muthappa HL, Grandmaster of Deccan Taekwondo Academy",
+        objectPosition: "center 30%",
+      },
+    ],
   },
-] as const;
+];
 
 type TeamProfileProps = {
   member: StudioProfile;
@@ -382,7 +422,7 @@ const CollaborationNetwork = () => (
   </section>
 );
 
-const GrandmasterProfile = ({ grandmaster }: { grandmaster: (typeof itkbaGrandmasters)[number] }) => (
+const GrandmasterProfile = ({ grandmaster }: { grandmaster: GrandmasterProfileData }) => (
   <motion.article variants={fadeUp} className="group mx-auto w-full max-w-[18rem] md:mx-0">
     <div className="relative mb-6 aspect-[4/5] overflow-hidden bg-foreground/[0.035]">
       <ProtectedImage
@@ -400,13 +440,15 @@ const GrandmasterProfile = ({ grandmaster }: { grandmaster: (typeof itkbaGrandma
         {grandmaster.name}
       </h4>
       <div className="mt-4 space-y-2 text-sm leading-relaxed tracking-wide text-foreground/66">
-        <p>{grandmaster.role}</p>
-        <p>{grandmaster.position}</p>
-        {"affiliation" in grandmaster && grandmaster.affiliation && <p>{grandmaster.affiliation}</p>}
+        {grandmaster.details.map((detail) => (
+          <p key={detail}>{detail}</p>
+        ))}
       </div>
-      <p className="mt-5 text-xs uppercase tracking-[0.22em] text-foreground/48">
-        {grandmaster.location}
-      </p>
+      {grandmaster.location && (
+        <p className="mt-5 text-xs uppercase tracking-[0.22em] text-foreground/48">
+          {grandmaster.location}
+        </p>
+      )}
     </div>
   </motion.article>
 );
@@ -452,21 +494,25 @@ const InstitutionalCollaboratorFeature = () => (
         </div>
       </motion.div>
 
-      <div>
-        <p className="mb-8 text-xs font-medium uppercase tracking-[0.28em] text-saffron">
-          ITKBA Grandmasters
-        </p>
-        <motion.div
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-80px" }}
-          variants={stagger}
-          className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-20 lg:max-w-3xl lg:gap-24"
-        >
-          {itkbaGrandmasters.map((grandmaster) => (
-            <GrandmasterProfile key={grandmaster.name} grandmaster={grandmaster} />
-          ))}
-        </motion.div>
+      <div className="space-y-16 md:space-y-20">
+        {grandmasterGroups.map((group) => (
+          <div key={group.heading}>
+            <p className="mb-8 text-xs font-medium uppercase tracking-[0.28em] text-saffron">
+              {group.heading}
+            </p>
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: "-80px" }}
+              variants={stagger}
+              className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-20 lg:max-w-3xl lg:gap-24"
+            >
+              {group.profiles.map((grandmaster) => (
+                <GrandmasterProfile key={grandmaster.name} grandmaster={grandmaster} />
+              ))}
+            </motion.div>
+          </div>
+        ))}
       </div>
     </div>
   </section>

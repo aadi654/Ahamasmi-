@@ -102,7 +102,7 @@ export default function Home() {
           </p>
           <div className="mt-16 border-t border-foreground/10 pt-8 flex items-center justify-between">
             <span className="uppercase tracking-widest text-xs font-medium text-muted">Ahamasmi Studio</span>
-            <Link href="/philosophy" className="group flex items-center gap-2 text-sm uppercase tracking-widest hover:text-saffron transition-colors">
+            <Link href="/i-am" className="group flex items-center gap-2 text-sm uppercase tracking-widest hover:text-saffron transition-colors">
               I am <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
             </Link>
           </div>
