@@ -41,14 +41,14 @@ export default function Home() {
             variants={stagger}
             className="text-white max-w-4xl"
           >
-            <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl lg:text-9xl font-light tracking-tighter mb-4">
-              Spatial
+            <motion.h1 variants={fadeUp} className="text-[clamp(3rem,13vw,3.75rem)] md:text-[clamp(4rem,8vw,5rem)] lg:text-[clamp(4.5rem,8.2vw,7rem)] font-light leading-[0.98] tracking-[-0.03em] mb-4">
+              Spaces That
             </motion.h1>
-            <motion.h1 variants={fadeUp} className="text-5xl md:text-7xl lg:text-9xl font-light tracking-tighter mb-8 md:mb-12">
-              Narratives
+            <motion.h1 variants={fadeUp} className="text-[clamp(3rem,13vw,3.75rem)] md:text-[clamp(4rem,8vw,5rem)] lg:text-[clamp(4.5rem,8.2vw,7rem)] font-light leading-[0.98] tracking-[-0.03em] mb-8 md:mb-12">
+              Become You
             </motion.h1>
-            <motion.p variants={fadeUp} className="text-lg md:text-xl font-light tracking-wide max-w-lg opacity-90">
-              We design environments that blur the boundaries between nature, culture, and human experience.
+            <motion.p variants={fadeUp} className="max-w-[34rem] text-lg font-light leading-[1.45] tracking-wide opacity-90 md:text-xl">
+              Architecture shaped around who you are, how you live, and where you belong.
             </motion.p>
           </motion.div>
         </div>
