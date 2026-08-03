@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -185,11 +186,27 @@ const collaborationLogos: CollaborationLogo[] = [
 
 const institutionalCollaborator = {
   label: "Martial Arts & Education",
-  name: "Indian Taekwondo Kick Boxing Association",
-  shortName: "ITKBA",
+  eyebrow: "ITKBA",
+  title: ["Indian Taekwondo", "Kick Boxing", "Association"],
   logo: "/images/collaborators/logos/itkba.png",
   logoAlt: "Indian Taekwondo Kick Boxing Association logo",
   description: "Part of Ahamasmi’s martial arts and educational network.",
+};
+
+const deccanTaekwondoAcademy = {
+  eyebrow: "DECCAN",
+  title: ["DECCAN TAEKWONDO", "ACADEMY"],
+  logo: "/images/academy/world-taekwondo-logo.png",
+  logoAlt: "World Taekwondo logo",
+  description: "Part of Ahamasmi’s martial arts and educational network.",
+};
+
+type InstitutionalOrganisation = {
+  eyebrow: string;
+  title: string[];
+  logo: string;
+  logoAlt: string;
+  description: string;
 };
 
 type GrandmasterProfileData = {
@@ -236,7 +253,7 @@ const grandmasterGroups: GrandmasterGroup[] = [
     ],
   },
   {
-    heading: "Deccan Taekwondo Academy",
+    heading: "Deccan Grandmaster",
     profiles: [
       {
         name: "SHREE MUTHAPPA HL",
@@ -453,67 +470,80 @@ const GrandmasterProfile = ({ grandmaster }: { grandmaster: GrandmasterProfileDa
   </motion.article>
 );
 
+const InstitutionalOrganisationIntro = ({
+  organisation,
+}: {
+  organisation: InstitutionalOrganisation;
+}) => (
+  <motion.div
+    initial="hidden"
+    whileInView="visible"
+    viewport={{ once: true, margin: "-80px" }}
+    variants={fadeUp}
+    className="grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,0.62fr)_minmax(0,1fr)] md:items-center md:gap-10"
+  >
+    <div>
+      <div className="relative aspect-square w-full max-w-[11.5rem]">
+        <Image
+          src={organisation.logo}
+          alt={organisation.logoAlt}
+          fill
+          sizes="(min-width: 768px) 11.5rem, 56vw"
+          className="object-contain object-left"
+        />
+      </div>
+    </div>
+
+    <div className="max-w-xl">
+      <p className="text-xs font-medium uppercase tracking-[0.28em] text-foreground/48">
+        {organisation.eyebrow}
+      </p>
+      <h3 className="mt-5 text-3xl font-light uppercase leading-tight tracking-[0.08em] text-foreground md:text-4xl">
+        {organisation.title.map((line) => (
+          <Fragment key={line}>
+            {line}
+            <br />
+          </Fragment>
+        ))}
+      </h3>
+      <p className="mt-6 max-w-md text-base font-light leading-relaxed tracking-wide text-foreground/68">
+        {organisation.description}
+      </p>
+    </div>
+  </motion.div>
+);
+
+const GrandmasterGroup = ({ group }: { group: GrandmasterGroup }) => (
+  <div>
+    <p className="mb-8 text-xs font-medium uppercase tracking-[0.28em] text-saffron">
+      {group.heading}
+    </p>
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-80px" }}
+      variants={stagger}
+      className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-20 lg:max-w-3xl lg:gap-24"
+    >
+      {group.profiles.map((grandmaster) => (
+        <GrandmasterProfile key={grandmaster.name} grandmaster={grandmaster} />
+      ))}
+    </motion.div>
+  </div>
+);
+
 const InstitutionalCollaboratorFeature = () => (
   <section className="border-t border-foreground/10 pt-8">
     <SectionMarker label={institutionalCollaborator.label} />
 
     <div className="space-y-10 md:space-y-12">
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-80px" }}
-        variants={fadeUp}
-        className="grid grid-cols-1 gap-8 md:grid-cols-[minmax(0,0.62fr)_minmax(0,1fr)] md:items-center md:gap-10"
-      >
-        <div>
-          <div className="relative aspect-square w-full max-w-[11.5rem]">
-            <Image
-              src={institutionalCollaborator.logo}
-              alt={institutionalCollaborator.logoAlt}
-              fill
-              sizes="(min-width: 768px) 11.5rem, 56vw"
-              className="object-contain object-left"
-            />
-          </div>
-        </div>
+      <InstitutionalOrganisationIntro organisation={institutionalCollaborator} />
+      <GrandmasterGroup group={grandmasterGroups[0]} />
 
-        <div className="max-w-xl">
-          <p className="text-xs font-medium uppercase tracking-[0.28em] text-foreground/48">
-            {institutionalCollaborator.shortName}
-          </p>
-          <h3 className="mt-5 text-3xl font-light uppercase leading-tight tracking-[0.08em] text-foreground md:text-4xl">
-            Indian Taekwondo
-            <br />
-            Kick Boxing
-            <br />
-            Association
-          </h3>
-          <p className="mt-6 max-w-md text-base font-light leading-relaxed tracking-wide text-foreground/68">
-            {institutionalCollaborator.description}
-          </p>
-        </div>
-      </motion.div>
-
-      <div className="space-y-16 md:space-y-20">
-        {grandmasterGroups.map((group) => (
-          <div key={group.heading}>
-            <p className="mb-8 text-xs font-medium uppercase tracking-[0.28em] text-saffron">
-              {group.heading}
-            </p>
-            <motion.div
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-80px" }}
-              variants={stagger}
-              className="grid grid-cols-1 gap-12 md:grid-cols-2 md:gap-20 lg:max-w-3xl lg:gap-24"
-            >
-              {group.profiles.map((grandmaster) => (
-                <GrandmasterProfile key={grandmaster.name} grandmaster={grandmaster} />
-              ))}
-            </motion.div>
-          </div>
-        ))}
+      <div className="pt-8 md:pt-10">
+        <InstitutionalOrganisationIntro organisation={deccanTaekwondoAcademy} />
       </div>
+      <GrandmasterGroup group={grandmasterGroups[1]} />
     </div>
   </section>
 );
