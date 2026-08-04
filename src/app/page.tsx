@@ -42,13 +42,14 @@ export default function Home() {
             className="text-white max-w-4xl"
           >
             <motion.h1 variants={fadeUp} className="text-[clamp(3rem,13vw,3.75rem)] md:text-[clamp(4rem,8vw,5rem)] lg:text-[clamp(4.5rem,8.2vw,7rem)] font-light leading-[0.98] tracking-[-0.03em] mb-4">
-              Spaces That
+              Architecturing
             </motion.h1>
             <motion.h1 variants={fadeUp} className="text-[clamp(3rem,13vw,3.75rem)] md:text-[clamp(4rem,8vw,5rem)] lg:text-[clamp(4.5rem,8.2vw,7rem)] font-light leading-[0.98] tracking-[-0.03em] mb-8 md:mb-12">
-              Become You
+              Lines for Lives
             </motion.h1>
-            <motion.p variants={fadeUp} className="max-w-[34rem] text-lg font-light leading-[1.45] tracking-wide opacity-90 md:text-xl">
-              Architecture shaped around who you are, how you live, and where you belong.
+            <motion.p variants={fadeUp} className="max-w-4xl text-base font-light leading-[1.45] tracking-wide opacity-90 md:text-xl">
+              <span className="lg:block">Because every life is different, every space deserves its own story.</span>{" "}
+              <span className="lg:block">We craft architecture that is deeply personal, purposeful, and uniquely yours.</span>
             </motion.p>
           </motion.div>
         </div>
