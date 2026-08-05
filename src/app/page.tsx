@@ -24,27 +24,38 @@ export default function Home() {
   return (
     <div className="bg-background">
       {/* Hero Section */}
-      <section className="relative h-screen w-full overflow-hidden">
+      <section className="home-hero relative w-full overflow-hidden">
         <Image
-          src="/ahamasmi-hero-orange-saraswati-final.jpeg"
+          src="/ahamasmi-hero-orange-background-clean.jpeg"
           alt="Ahamasmi Architecture Hero"
           fill
+          sizes="100vw"
           className="hero-artwork object-cover"
           priority
         />
+        <div className="hero-symbol-region absolute pointer-events-none" aria-hidden="true">
+          <Image
+            src="/ahamasmi-saraswati-symbol.png"
+            alt=""
+            fill
+            sizes="(min-width: 1024px) 48vw, 76vw"
+            className="saraswati-symbol object-contain"
+            priority
+          />
+        </div>
         <div className="absolute inset-0 bg-black/5" />
         
-        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 lg:p-24 pb-24 md:pb-24">
+        <div className="hero-copy-layer absolute inset-0 z-10 flex flex-col justify-end">
           <motion.div
             initial="hidden"
             animate="visible"
             variants={stagger}
-            className="text-white max-w-4xl"
+            className="hero-copy text-white"
           >
-            <motion.h1 variants={fadeUp} className="text-[clamp(3rem,13vw,3.75rem)] md:text-[clamp(4rem,8vw,5rem)] lg:text-[clamp(4.5rem,8.2vw,7rem)] font-light leading-[0.98] tracking-[-0.03em] mb-4">
+            <motion.h1 variants={fadeUp} className="hero-heading text-[clamp(3rem,13vw,3.75rem)] md:text-[clamp(4rem,8vw,5rem)] lg:text-[clamp(4.5rem,8.2vw,7rem)] font-light leading-[0.98] tracking-[-0.03em] mb-4">
               Architecturing
             </motion.h1>
-            <motion.h1 variants={fadeUp} className="text-[clamp(3rem,13vw,3.75rem)] md:text-[clamp(4rem,8vw,5rem)] lg:text-[clamp(4.5rem,8.2vw,7rem)] font-light leading-[0.98] tracking-[-0.03em] mb-8 md:mb-12">
+            <motion.h1 variants={fadeUp} className="hero-heading text-[clamp(3rem,13vw,3.75rem)] md:text-[clamp(4rem,8vw,5rem)] lg:text-[clamp(4.5rem,8.2vw,7rem)] font-light leading-[0.98] tracking-[-0.03em] mb-8 md:mb-12">
               Lines for Lives
             </motion.h1>
             <motion.p variants={fadeUp} className="max-w-4xl text-base font-light leading-[1.45] tracking-wide opacity-90 md:text-xl">
@@ -54,36 +65,147 @@ export default function Home() {
           </motion.div>
         </div>
         <style jsx global>{`
+          .home-hero {
+            --hero-nav-safe-zone: clamp(6.5rem, 13svh, 9rem);
+            --hero-nav-space: var(--hero-nav-safe-zone);
+            --hero-bottom-space: clamp(2rem, 5svh, 4rem);
+            --hero-inline-space: clamp(1.5rem, 4vw, 6rem);
+            min-height: 100vh;
+            min-height: 100svh;
+            background: #df7100;
+          }
+
           .hero-artwork {
             object-position: center center;
-            transform: translate3d(0, clamp(48px, 7vh, 72px), 0) scale(1.16);
             transform-origin: center;
           }
 
-          @media (min-width: 1024px) and (max-height: 920px) {
-            .hero-artwork {
-              object-position: center top;
-              transform: translate3d(0, clamp(88px, 11vh, 116px), 0) scale(1.2);
+          .hero-symbol-region {
+            top: calc(var(--hero-nav-safe-zone) + clamp(1.5rem, 3svh, 3rem));
+            right: clamp(1.5rem, 5vw, 6rem);
+            bottom: var(--hero-bottom-space);
+            width: min(46vw, 54rem);
+          }
+
+          .saraswati-symbol {
+            object-position: center center;
+          }
+
+          .hero-copy-layer {
+            padding: var(--hero-nav-space) var(--hero-inline-space) var(--hero-bottom-space);
+          }
+
+          .hero-copy {
+            max-width: min(54rem, 100%);
+          }
+
+          .hero-heading {
+            font-size: clamp(3rem, 13vw, 3.75rem);
+          }
+
+          @media (min-width: 768px) {
+            .hero-heading {
+              font-size: clamp(4rem, 8vw, 5rem);
             }
           }
 
-          @media (min-width: 1600px) and (max-height: 920px) {
-            .hero-artwork {
-              object-position: center top;
-              transform: translate3d(0, clamp(104px, 12vh, 128px), 0) scale(1.2);
+          @media (min-width: 1024px) {
+            .home-hero {
+              --hero-bottom-space: clamp(2.5rem, 6svh, 5rem);
+            }
+
+            .hero-copy {
+              max-width: min(47rem, calc(52vw - var(--hero-inline-space)));
+            }
+
+            .hero-heading {
+              font-size: clamp(4.5rem, min(8.2vw, 13svh), 7rem);
             }
           }
 
-          @media (min-width: 1600px) and (min-height: 921px) {
-            .hero-artwork {
-              object-position: center top;
-              transform: translate3d(0, clamp(92px, 9vh, 120px), 0) scale(1.18);
+          @media (min-width: 1024px) and (max-height: 850px) {
+            .home-hero {
+              --hero-nav-safe-zone: clamp(6rem, 16svh, 7.5rem);
+              --hero-nav-space: var(--hero-nav-safe-zone);
+              --hero-bottom-space: clamp(1.5rem, 4svh, 2.5rem);
+            }
+
+            .hero-symbol-region {
+              top: calc(var(--hero-nav-safe-zone) + clamp(1rem, 2svh, 1.75rem));
+              bottom: 1.5rem;
+              width: min(41vw, 44rem);
+            }
+
+            .hero-heading {
+              font-size: clamp(4rem, min(6.2vw, 12svh), 5.6rem);
+            }
+          }
+
+          @media (min-width: 1400px) and (max-height: 1150px) {
+            .home-hero {
+              --hero-nav-safe-zone: clamp(7rem, 14svh, 9rem);
+              --hero-nav-space: var(--hero-nav-safe-zone);
+              --hero-bottom-space: clamp(2.5rem, 5svh, 4rem);
+            }
+
+            .hero-symbol-region {
+              top: calc(var(--hero-nav-safe-zone) + clamp(1.25rem, 2.5svh, 2.75rem));
+              bottom: var(--hero-bottom-space);
+              width: min(44vw, 52rem);
+            }
+          }
+
+          @media (min-width: 1024px) and (max-width: 1100px) {
+            .hero-symbol-region {
+              right: clamp(1.5rem, 4vw, 3rem);
+              width: min(40vw, 27rem);
+            }
+
+            .hero-heading {
+              font-size: clamp(3.5rem, 6.2vw, 4rem);
+            }
+          }
+
+          @media (min-width: 1024px) and (max-height: 720px) {
+            .home-hero {
+              --hero-nav-safe-zone: clamp(5.75rem, 16svh, 6.75rem);
+              --hero-nav-space: var(--hero-nav-safe-zone);
+              --hero-bottom-space: clamp(1.25rem, 3svh, 2rem);
+            }
+
+            .hero-symbol-region {
+              top: calc(var(--hero-nav-safe-zone) + clamp(0.75rem, 2svh, 1.25rem));
+              bottom: var(--hero-bottom-space);
+              width: min(39vw, 38rem);
+            }
+
+            .hero-copy {
+              max-width: min(42rem, calc(50vw - var(--hero-inline-space)));
+            }
+          }
+
+          @media (min-width: 1024px) and (min-aspect-ratio: 12 / 5) and (max-height: 920px) {
+            .hero-symbol-region {
+              width: min(40vw, 44rem);
             }
           }
 
           @media (max-width: 767px) {
+            .home-hero {
+              --hero-nav-space: clamp(5.5rem, 13svh, 7rem);
+              --hero-bottom-space: clamp(2rem, 6svh, 3.5rem);
+            }
+
             .hero-artwork {
-              transform: translate3d(0, clamp(32px, 6vh, 56px), 0) scale(1.14);
+              object-position: center center;
+            }
+
+            .hero-symbol-region {
+              top: var(--hero-nav-space);
+              right: 50%;
+              bottom: clamp(12rem, 28svh, 16rem);
+              width: min(76vw, 22rem);
+              transform: translateX(50%);
             }
           }
         `}</style>
