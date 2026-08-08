@@ -11,8 +11,22 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Ahamasmi | Architecture & Spatial Design",
-  description: "Premium architecture and spatial design portfolio.",
+  title: "Ahamasmi Architect - I AM Architect",
+  description:
+    "Ahamasmi Architect creates thoughtful, people-centric spaces shaped around individual lives, contexts and stories across architecture, interiors and urban design.",
+  alternates: {
+    canonical: "https://ahamasmi.com/",
+  },
+  openGraph: {
+    title: "Ahamasmi Architect - I AM Architect",
+    description:
+      "Ahamasmi Architect creates thoughtful, people-centric spaces shaped around individual lives, contexts and stories across architecture, interiors and urban design.",
+  },
+  twitter: {
+    title: "Ahamasmi Architect - I AM Architect",
+    description:
+      "Ahamasmi Architect creates thoughtful, people-centric spaces shaped around individual lives, contexts and stories across architecture, interiors and urban design.",
+  },
 };
 
 export default function RootLayout({
