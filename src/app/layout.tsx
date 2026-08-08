@@ -17,6 +17,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "https://ahamasmi.com/",
   },
+  verification: {
+    google: "W5piRFH6g6DRQOQRSXQggF5TzDoDcY7mu3KaJ1qUbjs",
+  },
   openGraph: {
     title: "Ahamasmi Architect - I AM Architect",
     description:
