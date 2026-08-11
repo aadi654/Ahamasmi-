@@ -130,6 +130,20 @@ function PinnedHorizontalGallery({
   images: ProjectGalleryImage[];
   title: string;
 }) {
+  if (images.length === 0) {
+    return null;
+  }
+
+  return <PinnedHorizontalGalleryTrack images={images} title={title} />;
+}
+
+function PinnedHorizontalGalleryTrack({
+  images,
+  title,
+}: {
+  images: ProjectGalleryImage[];
+  title: string;
+}) {
   const sectionRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const [travelDistance, setTravelDistance] = useState(0);
@@ -172,10 +186,6 @@ function PinnedHorizontalGallery({
       resizeObserver.disconnect();
     };
   }, [images, measureTrack]);
-
-  if (images.length === 0) {
-    return null;
-  }
 
   return (
     <>
