@@ -103,6 +103,16 @@ type CollaborationLogo = {
   image: string;
   alt: string;
   className?: string;
+  sizes?: string;
+};
+
+type TechnologyCollaborator = {
+  name: string;
+  role: string;
+  detail: string;
+  image: string;
+  alt: string;
+  objectPosition: string;
 };
 
 const collaborators: Collaborator[] = [
@@ -158,29 +168,60 @@ const collaborationLogos: CollaborationLogo[] = [
     name: "Designworks Architects & Consultants Sdn. Bhd.",
     image: "/images/collaborators/logos/designworks.png",
     alt: "Designworks Architects and Consultants logo",
+    className: "h-16 max-w-[10rem]",
   },
   {
     name: "ROOM DESIGN",
     image: "/images/collaborators/logos/room-design.png",
     alt: "ROOM DESIGN logo",
-    className: "max-w-[10rem]",
+    className: "h-16 max-w-[10rem]",
   },
   {
     name: "Babylon Health Hub",
     image: "/images/collaborators/logos/babylon-health-hub.jpg",
     alt: "Babylon Health Hub logo",
+    className: "h-16 max-w-[11.75rem]",
   },
   {
     name: "Home Awaits",
     image: "/images/collaborators/logos/home-awaits.jpg",
     alt: "Home Awaits logo",
-    className: "max-w-[5.5rem]",
+    className: "h-[4.5rem] max-w-[5rem]",
   },
   {
-    name: "Indian Taekwondo Kick Boxing Association",
-    image: "/images/collaborators/logos/itkba.png",
-    alt: "Indian Taekwondo Kick Boxing Association logo",
-    className: "max-w-[6.5rem]",
+    name: "Mindful Solutions",
+    image: "/images/collaborators/logos/mindful-solutions-dr-kiran-desai.jpeg",
+    alt: "Mindful Solutions - Dr. Kiran J. Desai",
+    className: "h-36 max-w-[9rem] sm:h-40 sm:max-w-[10rem] lg:h-44 lg:max-w-[12rem]",
+    sizes: "(min-width: 1024px) 12rem, (min-width: 640px) 10rem, 44vw",
+  },
+  {
+    name: "Vedlaxmi Engineering Solutions",
+    image: "/images/collaborators/logos/vedlaxmi-engineering-solutions-logo.jpeg",
+    alt: "Vedlaxmi Engineering Solutions",
+    className: "h-20 max-w-[13rem] sm:max-w-[14rem] lg:max-w-[14.25rem]",
+  },
+];
+
+const primaryCollaborationLogos = collaborationLogos.slice(0, 4);
+const featuredCollaborationLogos = collaborationLogos.slice(4);
+
+const technologyCollaborators: TechnologyCollaborator[] = [
+  {
+    name: "Prabodh Kotasthane",
+    role: "Technology Advisor",
+    detail: "Co-Founder, Zijus",
+    image: "/images/collaborators/prabodh-kotasthane.jpg",
+    alt: "Prabodh Kotasthane - Technology Advisor",
+    objectPosition: "center 24%",
+  },
+  {
+    name: "Aditya Deshpande",
+    role: "Digital Product & Technology Partner",
+    detail: "Web Platforms & Digital Systems",
+    image: "/images/collaborators/aditya-deshpande.jpg",
+    alt: "Aditya Deshpande - Digital Product and Technology Partner",
+    objectPosition: "30% center",
   },
 ];
 
@@ -283,7 +324,7 @@ const TeamProfile = ({ member, variant }: TeamProfileProps) => {
     <motion.article
       variants={fadeUp}
       className={`group w-full border-t border-foreground/12 pt-5 ${
-        isLeadership ? "mx-auto max-w-[30rem] md:max-w-none" : "mx-auto max-w-[22rem] sm:max-w-none"
+        isLeadership ? "mx-auto max-w-[30rem] md:max-w-none" : "mx-auto max-w-[20rem] xl:max-w-[10.5rem]"
       }`}
     >
       <div
@@ -298,7 +339,7 @@ const TeamProfile = ({ member, variant }: TeamProfileProps) => {
           sizes={
             isLeadership
               ? "(min-width: 1024px) 42vw, (min-width: 768px) 45vw, 100vw"
-              : "(min-width: 1024px) 28vw, (min-width: 640px) 45vw, 100vw"
+              : "(min-width: 1280px) 10.5rem, (min-width: 1024px) 28vw, (min-width: 640px) 45vw, 100vw"
           }
           className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] motion-reduce:transition-none group-hover:scale-[1.015]"
           style={{ objectPosition: member.imagePosition ?? "center center" }}
@@ -330,10 +371,10 @@ type OrganisationLogoProps = {
 const OrganisationLogo = ({
   src,
   alt,
-  className = "max-w-[15rem]",
+  className = "h-16 max-w-[15rem]",
   sizes = "(min-width: 768px) 15rem, 12rem",
 }: OrganisationLogoProps) => (
-  <div className={`relative h-16 w-full ${className}`}>
+  <div className={`relative w-full ${className}`}>
     <Image
       src={src}
       alt={alt}
@@ -342,6 +383,27 @@ const OrganisationLogo = ({
       className="object-contain object-center"
     />
   </div>
+);
+
+const CollaborationLogoItem = ({
+  logo,
+  className = "min-h-24 sm:min-h-28",
+}: {
+  logo: CollaborationLogo;
+  className?: string;
+}) => (
+  <motion.div
+    key={logo.name}
+    variants={fadeUp}
+    className={`flex items-center justify-center px-2 opacity-[0.85] transition duration-300 ease-out hover:scale-[1.015] hover:opacity-100 motion-reduce:transition-none sm:px-4 ${className}`}
+  >
+    <OrganisationLogo
+      src={logo.image}
+      alt={logo.alt}
+      className={logo.className ?? "h-16 max-w-[13rem]"}
+      sizes={logo.sizes ?? "(min-width: 1024px) 13rem, (min-width: 768px) 12rem, 42vw"}
+    />
+  </motion.div>
 );
 
 const CollaboratorProfile = ({ collaborator }: { collaborator: Collaborator }) => (
@@ -417,23 +479,80 @@ const CollaborationNetwork = () => (
       whileInView="visible"
       viewport={{ once: true, margin: "-80px" }}
       variants={stagger}
-      className="grid grid-cols-1 items-center gap-x-8 gap-y-10 min-[420px]:grid-cols-2 md:grid-cols-6 xl:grid-cols-5"
+      className="space-y-14 md:space-y-16 lg:space-y-18"
     >
-      {collaborationLogos.map((logo, index) => (
-        <motion.div
-          key={logo.name}
-          variants={fadeUp}
-          className={`flex min-h-20 items-center justify-center px-4 md:col-span-2 xl:col-span-1 ${
-            index === 3 ? "md:col-start-2 xl:col-start-auto" : ""
-          }`}
-        >
-          <OrganisationLogo
-            src={logo.image}
-            alt={logo.alt}
-            className={logo.className ?? "max-w-[13rem]"}
-            sizes="(min-width: 768px) 12rem, 42vw"
+      <div className="grid grid-cols-1 items-center gap-x-8 gap-y-12 min-[360px]:grid-cols-2 sm:gap-x-10 lg:grid-cols-4 lg:gap-x-12">
+        {primaryCollaborationLogos.map((logo) => (
+          <CollaborationLogoItem key={logo.name} logo={logo} />
+        ))}
+      </div>
+
+      <div className="mx-auto grid max-w-2xl grid-cols-1 items-center gap-x-12 gap-y-12 min-[360px]:grid-cols-2 md:gap-x-20 lg:max-w-3xl lg:gap-x-28">
+        {featuredCollaborationLogos.map((logo) => (
+          <CollaborationLogoItem
+            key={logo.name}
+            logo={logo}
+            className="min-h-36 sm:min-h-40 lg:min-h-44"
           />
-        </motion.div>
+        ))}
+      </div>
+    </motion.div>
+  </section>
+);
+
+const TechnologyCollaboratorProfile = ({
+  collaborator,
+}: {
+  collaborator: TechnologyCollaborator;
+}) => (
+  <motion.article
+    variants={fadeUp}
+    className="group mx-auto w-full max-w-[18rem] md:max-w-none"
+  >
+    <div className="relative aspect-[4/5] overflow-hidden bg-foreground/[0.035]">
+      <ProtectedImage
+        src={collaborator.image}
+        alt={collaborator.alt}
+        fill
+        sizes="(min-width: 1024px) 18rem, (min-width: 768px) 36vw, 86vw"
+        className="object-cover transition-transform duration-700 ease-[cubic-bezier(0.76,0,0.24,1)] motion-reduce:transition-none group-hover:scale-[1.015]"
+        style={{ objectPosition: collaborator.objectPosition }}
+      />
+    </div>
+
+    <div className="mt-6 w-full">
+      <h3 className="text-xl font-light leading-tight tracking-[0.06em] text-foreground md:text-2xl">
+        {collaborator.name}
+      </h3>
+      <p className="mt-2 text-sm uppercase leading-relaxed tracking-[0.18em] text-foreground/58">
+        {collaborator.role}
+      </p>
+      <p className="mt-2 text-sm leading-relaxed tracking-wide text-foreground/62">
+        {collaborator.detail}
+      </p>
+    </div>
+  </motion.article>
+);
+
+const DigitalTechnologySection = () => (
+  <section className="border-t border-foreground/10 pt-8">
+    <SectionMarker label="Digital & Technology" />
+    <p className="mb-14 max-w-xl text-sm leading-relaxed tracking-wide text-foreground/62 md:mb-16">
+      Digital collaborators supporting Ahamasmi across technology, web platforms and evolving digital systems.
+    </p>
+
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, margin: "-80px" }}
+      variants={stagger}
+      className="mx-auto grid max-w-4xl grid-cols-1 gap-14 md:grid-cols-2 md:gap-20 lg:max-w-[54rem] lg:gap-28"
+    >
+      {technologyCollaborators.map((collaborator) => (
+        <TechnologyCollaboratorProfile
+          key={collaborator.name}
+          collaborator={collaborator}
+        />
       ))}
     </motion.div>
   </section>
@@ -655,7 +774,7 @@ export default function IAmPage() {
               whileInView="visible"
               viewport={{ once: true, margin: "-80px" }}
               variants={stagger}
-              className="mx-auto grid max-w-4xl grid-cols-1 gap-x-12 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-14 lg:gap-y-18"
+              className="mx-auto grid max-w-4xl grid-cols-1 gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-9 xl:gap-y-12"
             >
               {studioTeam.map((member) => (
                 <TeamProfile
@@ -705,6 +824,7 @@ export default function IAmPage() {
         <div className="mx-auto max-w-6xl space-y-16 md:space-y-24">
           <CollaboratorsSection />
           <CollaborationNetwork />
+          <DigitalTechnologySection />
           <InstitutionalCollaboratorFeature />
         </div>
       </section>
