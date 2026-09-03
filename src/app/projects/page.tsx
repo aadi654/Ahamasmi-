@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ProtectedImage } from "@/components/protected-image";
 import {
@@ -44,8 +45,18 @@ const projectStats = [
   { value: "12", label: "Years" },
 ];
 
-export default function ProjectsPage() {
-  const [activeCategory, setActiveCategory] = useState<ProjectFilter>("all");
+function isProjectFilter(value: string | null): value is ProjectFilter {
+  return value === "all" || projectCategories.some((category) => category === value);
+}
+
+function getCategoryHref(category: ProjectFilter) {
+  return category === "all" ? "/projects" : `/projects?category=${category}`;
+}
+
+function ProjectsPageContent() {
+  const searchParams = useSearchParams();
+  const categoryParam = searchParams.get("category");
+  const activeCategory = isProjectFilter(categoryParam) ? categoryParam : "all";
 
   const filteredProjects =
     activeCategory === "all" ? getAllProjects() : getProjectsByCategory(activeCategory);
@@ -105,8 +116,8 @@ export default function ProjectsPage() {
           >
             {categories.map((cat, index) => (
               <div key={cat.value} className="flex items-center">
-                <button
-                  onClick={() => setActiveCategory(cat.value)}
+                <Link
+                  href={getCategoryHref(cat.value)}
                   className={`group relative pb-2 transition-colors duration-300 ${
                     activeCategory === cat.value ? "text-saffron" : "text-foreground/56 hover:text-foreground"
                   }`}
@@ -117,7 +128,7 @@ export default function ProjectsPage() {
                       activeCategory === cat.value ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
                     }`}
                   />
-                </button>
+                </Link>
                 {index < categories.length - 1 && (
                   <span className="mx-4 text-foreground/24">/</span>
                 )}
@@ -182,5 +193,13 @@ export default function ProjectsPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function ProjectsPage() {
+  return (
+    <Suspense fallback={null}>
+      <ProjectsPageContent />
+    </Suspense>
   );
 }

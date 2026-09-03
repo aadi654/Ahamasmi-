@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
+import { FormEvent, KeyboardEvent, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion, useReducedMotion, Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -13,6 +13,8 @@ const fadeUp: Variants = {
 };
 
 type ActiveTab = "academy" | "design-research";
+
+type NavigateSectionEvent = CustomEvent<{ section: ActiveTab }>;
 
 type PublicationSpread = {
   src: string;
@@ -162,6 +164,10 @@ const academyCredentials = [
   },
   academyCredential,
 ] satisfies AcademyCredential[];
+
+function isActiveTab(value: unknown): value is ActiveTab {
+  return value === "academy" || value === "design-research";
+}
 
 const publications: Publication[] = [
   {
@@ -870,6 +876,8 @@ export default function AhamasmiyodhahPage() {
   const [selectedPublication, setSelectedPublication] = useState<Publication | null>(null);
   const [selectedPublicationSpreadIndex, setSelectedPublicationSpreadIndex] = useState(0);
   const publicationTriggerRef = useRef<HTMLElement | null>(null);
+  const activeTabRef = useRef<ActiveTab>("academy");
+  const pendingScrollTabRef = useRef<ActiveTab | null>(null);
   const tabRefs = useRef<Record<ActiveTab, HTMLButtonElement | null>>({
     academy: null,
     "design-research": null,
@@ -878,19 +886,71 @@ export default function AhamasmiyodhahPage() {
   const activeSection = sections.find((section) => section.id === activeTab) ?? sections[0];
 
   useEffect(() => {
+    activeTabRef.current = activeTab;
+  }, [activeTab]);
+
+  const scrollToTabSection = useCallback(
+    (tab: ActiveTab) => {
+      document.getElementById(tab)?.scrollIntoView({
+        behavior: shouldReduceMotion ? "auto" : "smooth",
+        block: "start",
+      });
+    },
+    [shouldReduceMotion],
+  );
+
+  const selectTabFromNavigation = useCallback(
+    (tab: ActiveTab, shouldScroll: boolean) => {
+      if (shouldScroll) {
+        if (activeTabRef.current === tab) {
+          window.requestAnimationFrame(() => scrollToTabSection(tab));
+        } else {
+          pendingScrollTabRef.current = tab;
+        }
+      }
+
+      setActiveTab(tab);
+    },
+    [scrollToTabSection],
+  );
+
+  useEffect(() => {
     const selectHashTab = () => {
       const hashTab = window.location.hash.replace("#", "");
 
-      if (hashTab === "academy" || hashTab === "design-research") {
-        setActiveTab(hashTab);
+      if (isActiveTab(hashTab)) {
+        selectTabFromNavigation(hashTab, true);
+      } else {
+        selectTabFromNavigation("academy", false);
+      }
+    };
+
+    const handleSectionNavigation = (event: Event) => {
+      const section = (event as NavigateSectionEvent).detail?.section;
+
+      if (isActiveTab(section)) {
+        selectTabFromNavigation(section, true);
       }
     };
 
     selectHashTab();
     window.addEventListener("hashchange", selectHashTab);
+    window.addEventListener("popstate", selectHashTab);
+    window.addEventListener("ahamasmiyodhah:navigate-section", handleSectionNavigation);
 
-    return () => window.removeEventListener("hashchange", selectHashTab);
-  }, []);
+    return () => {
+      window.removeEventListener("hashchange", selectHashTab);
+      window.removeEventListener("popstate", selectHashTab);
+      window.removeEventListener("ahamasmiyodhah:navigate-section", handleSectionNavigation);
+    };
+  }, [selectTabFromNavigation]);
+
+  useLayoutEffect(() => {
+    if (pendingScrollTabRef.current !== activeTab) return;
+
+    pendingScrollTabRef.current = null;
+    scrollToTabSection(activeTab);
+  }, [activeTab, scrollToTabSection]);
 
   const validateForm = (data: AcademyFormData) => {
     const nextErrors: FormErrors = {};
@@ -921,7 +981,8 @@ export default function AhamasmiyodhahPage() {
   };
 
   const selectTab = (tab: ActiveTab) => {
-    setActiveTab(tab);
+    window.history.pushState(null, "", tab === "academy" ? "#academy" : "#design-research");
+    selectTabFromNavigation(tab, true);
   };
 
   const openPublication = (publication: Publication, spreadIndex: number, trigger: HTMLElement) => {
@@ -1054,6 +1115,7 @@ Comment: ${formData.comment.trim() || "Not specified"}`;
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, ease: [0.76, 0, 0.24, 1] }}
           >
+            <div id={activeTab} className="scroll-mt-36 md:scroll-mt-44">
             {activeTab === "academy" ? (
               <div className="grid grid-cols-1 gap-12 lg:grid-cols-[minmax(0,1.2fr)_minmax(420px,1fr)] lg:items-start lg:gap-x-14 xl:grid-cols-[minmax(0,1fr)_minmax(640px,1.1fr)] xl:gap-x-16">
                 <div className="min-w-0 max-w-3xl">
@@ -1350,6 +1412,7 @@ Comment: ${formData.comment.trim() || "Not specified"}`;
                 />
               </div>
             )}
+            </div>
           </motion.section>
         </div>
       </section>

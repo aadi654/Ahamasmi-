@@ -2,9 +2,12 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import type { ProjectCategory } from "@/content/projects";
+
+type AhamasmiyodhahSection = "academy" | "design-research";
 
 const links = [
   { href: "/", label: "Home" },
@@ -14,16 +17,27 @@ const links = [
   { href: "/contact", label: "Contact" },
 ];
 
-const projectSubmenuLinks = [
-  { href: "/projects", label: "Architecture" },
-  { href: "/projects", label: "Interior" },
-  { href: "/projects", label: "BIM" },
-  { href: "/projects", label: "Urban Design" },
+type SubmenuLink = {
+  href: string;
+  label: string;
+  category?: ProjectCategory;
+  section?: AhamasmiyodhahSection;
+};
+
+type ProjectSubmenuLink = SubmenuLink & {
+  category: ProjectCategory;
+};
+
+const projectSubmenuLinks: ProjectSubmenuLink[] = [
+  { href: "/projects?category=architecture", label: "Architecture", category: "architecture" },
+  { href: "/projects?category=interior", label: "Interior", category: "interior" },
+  { href: "/projects?category=bim", label: "BIM", category: "bim" },
+  { href: "/projects?category=urban-design", label: "Urban Design", category: "urban-design" },
 ];
 
-const aySubmenuLinks = [
-  { href: "/ahamasmiyodhah#academy", label: "Academy" },
-  { href: "/ahamasmiyodhah#design-research", label: "Design & Research" },
+const aySubmenuLinks: SubmenuLink[] = [
+  { href: "/ahamasmiyodhah#academy", label: "Academy", section: "academy" },
+  { href: "/ahamasmiyodhah#design-research", label: "Design & Research", section: "design-research" },
 ];
 
 export function Navbar() {
@@ -31,7 +45,9 @@ export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState<"projects" | "ahamasmiyodhah" | null>(null);
   const [activeSubmenuLeft, setActiveSubmenuLeft] = useState<number | null>(null);
+  const [currentHash, setCurrentHash] = useState("");
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -59,9 +75,22 @@ export function Navbar() {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    const updateHash = () => setCurrentHash(window.location.hash);
+
+    updateHash();
+    window.addEventListener("hashchange", updateHash);
+    window.addEventListener("popstate", updateHash);
+
+    return () => {
+      window.removeEventListener("hashchange", updateHash);
+      window.removeEventListener("popstate", updateHash);
+    };
+  }, [pathname]);
+
   const hasHero = pathname === "/";
-  const showProjectsSubmenu = pathname !== "/";
-  const showAhamasmiyodhahSubmenu = pathname !== "/";
+  const showProjectsSubmenu = true;
+  const showAhamasmiyodhahSubmenu = true;
   const isDarkBg = hasHero && !isScrolled;
   const textColorClass = isDarkBg ? "text-white" : "text-foreground";
   const projectSubmenuTextClass =
@@ -75,7 +104,12 @@ export function Navbar() {
         ? aySubmenuLinks
         : [];
   const isHomePage = pathname === "/";
+  const selectedProjectCategory = searchParams.get("category");
   const isActiveLink = (href: string) => (href === "/" ? pathname === href : pathname === href || pathname.startsWith(`${href}/`));
+  const isActiveProjectSubmenuLink = (category: ProjectCategory) =>
+    pathname === "/projects" && selectedProjectCategory === category;
+  const isActiveAhamasmiyodhahSubmenuLink = (section: AhamasmiyodhahSection) =>
+    pathname === "/ahamasmiyodhah" && currentHash === `#${section}`;
   const showPersistentActiveState = (href: string) => isActiveLink(href) && !isHomePage;
   const getLinkTextClass = (href: string) => (showPersistentActiveState(href) ? "text-saffron" : textColorClass);
   const getUnderlineClass = (href: string) => (showPersistentActiveState(href) ? "w-full" : "w-0 group-hover:w-full");
@@ -89,6 +123,22 @@ export function Navbar() {
     setIsOpen(false);
     setActiveSubmenu(null);
     setActiveSubmenuLeft(null);
+  };
+  const handleSubmenuClick = (item: SubmenuLink) => {
+    setActiveSubmenu(null);
+    setActiveSubmenuLeft(null);
+
+    if (item.section && pathname === "/ahamasmiyodhah") {
+      window.dispatchEvent(
+        new CustomEvent("ahamasmiyodhah:navigate-section", {
+          detail: { section: item.section },
+        }),
+      );
+    }
+  };
+  const handleMobileSubmenuClick = (item: SubmenuLink) => {
+    handleSubmenuClick(item);
+    closeMobileMenu();
   };
 
   return (
@@ -203,10 +253,23 @@ export function Navbar() {
             <div key={item.label} className="flex items-center">
               <Link
                 href={item.href}
-                className={`group relative pb-2 transition-colors duration-300 ${projectSubmenuTextClass}`}
+                onClick={() => handleSubmenuClick(item)}
+                className={`group relative pb-2 transition-colors duration-300 ${
+                  (item.category && isActiveProjectSubmenuLink(item.category)) ||
+                  (item.section && isActiveAhamasmiyodhahSubmenuLink(item.section))
+                    ? "text-saffron"
+                    : projectSubmenuTextClass
+                }`}
               >
                 {item.label}
-                <span className="absolute bottom-0 left-0 h-[1px] w-full origin-left scale-x-0 bg-saffron transition-transform duration-300 group-hover:scale-x-100" />
+                <span
+                  className={`absolute bottom-0 left-0 h-[1px] w-full origin-left bg-saffron transition-transform duration-300 ${
+                    (item.category && isActiveProjectSubmenuLink(item.category)) ||
+                    (item.section && isActiveAhamasmiyodhahSubmenuLink(item.section))
+                      ? "scale-x-100"
+                      : "scale-x-0 group-hover:scale-x-100"
+                  }`}
+                />
               </Link>
               {index < activeSubmenuLinks.length - 1 && (
                 <span className={`mx-4 ${projectSubmenuSeparatorClass}`}>/</span>
@@ -244,6 +307,64 @@ export function Navbar() {
                     {link.label}
                     <span className={`absolute bottom-0 left-1/2 h-[1px] -translate-x-1/2 bg-saffron transition-all duration-300 ${getMobileUnderlineClass(link.href)}`} />
                   </Link>
+                  {link.label === "Projects" && (
+                    <div className="mt-4 flex flex-wrap items-center justify-center gap-y-3 text-xs uppercase tracking-[0.2em]">
+                      {projectSubmenuLinks.map((item, index) => (
+                        <div key={item.category} className="flex items-center">
+                          <Link
+                            href={item.href}
+                            onClick={() => handleMobileSubmenuClick(item)}
+                            className={`group relative inline-flex min-h-9 items-center justify-center pb-1 transition-colors duration-300 ${
+                              isActiveProjectSubmenuLink(item.category)
+                                ? "text-saffron"
+                                : "text-foreground/56 hover:text-foreground focus:text-foreground"
+                            }`}
+                          >
+                            {item.label}
+                            <span
+                              className={`absolute bottom-0 left-0 h-[1px] w-full origin-left bg-saffron transition-transform duration-300 ${
+                                isActiveProjectSubmenuLink(item.category)
+                                  ? "scale-x-100"
+                                  : "scale-x-0 group-hover:scale-x-100"
+                              }`}
+                            />
+                          </Link>
+                          {index < projectSubmenuLinks.length - 1 && (
+                            <span className="mx-3 text-foreground/24">/</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {link.label === "Ahamasmiyodhah" && (
+                    <div className="mt-4 flex flex-wrap items-center justify-center gap-y-3 text-xs uppercase tracking-[0.2em]">
+                      {aySubmenuLinks.map((item, index) => (
+                        <div key={item.href} className="flex items-center">
+                          <Link
+                            href={item.href}
+                            onClick={() => handleMobileSubmenuClick(item)}
+                            className={`group relative inline-flex min-h-9 items-center justify-center pb-1 transition-colors duration-300 ${
+                              item.section && isActiveAhamasmiyodhahSubmenuLink(item.section)
+                                ? "text-saffron"
+                                : "text-foreground/56 hover:text-foreground focus:text-foreground"
+                            }`}
+                          >
+                            {item.label}
+                            <span
+                              className={`absolute bottom-0 left-0 h-[1px] w-full origin-left bg-saffron transition-transform duration-300 ${
+                                item.section && isActiveAhamasmiyodhahSubmenuLink(item.section)
+                                  ? "scale-x-100"
+                                  : "scale-x-0 group-hover:scale-x-100"
+                              }`}
+                            />
+                          </Link>
+                          {index < aySubmenuLinks.length - 1 && (
+                            <span className="mx-3 text-foreground/24">/</span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </motion.div>
               ))}
             </nav>
