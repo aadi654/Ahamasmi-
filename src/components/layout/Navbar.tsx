@@ -168,7 +168,7 @@ export function Navbar() {
         setActiveSubmenuLeft(null);
       }}
       className={`pointer-events-none fixed top-0 left-0 right-0 z-50 transition-colors duration-500 ${
-        isScrolled ? "bg-background/80 backdrop-blur-md" : "bg-transparent"
+        !hasHero || isScrolled ? "bg-background/80 backdrop-blur-md" : "bg-transparent"
       }`}
     >
       <div className="container mx-auto px-6 h-24 flex items-center justify-between pointer-events-auto">
@@ -275,40 +275,40 @@ export function Navbar() {
       </div>
 
       {activeSubmenuLinks.length > 0 && (
-      <div className="relative hidden w-full px-6 md:block pointer-events-auto">
-        <div
-          style={{ left: activeSubmenuLeft ?? "50%" }}
-          className="absolute top-0 flex w-max max-w-[min(90vw,760px)] -translate-x-1/2 flex-wrap items-center justify-center gap-y-4 px-2 py-2 text-sm tracking-[0.2em]"
-        >
-          {activeSubmenuLinks.map((item, index) => (
-            <div key={item.label} className="flex items-center">
-              <Link
-                href={item.href}
-                onClick={handleSubmenuClick}
-                className={`group relative pb-2 transition-colors duration-300 ${
-                  (item.category && isActiveProjectSubmenuLink(item.category)) ||
-                  (item.section && isActiveAhamasmiyodhahSubmenuLink(item.section))
-                    ? "text-saffron"
-                    : projectSubmenuTextClass
-                }`}
-              >
-                {item.label}
-                <span
-                  className={`absolute bottom-0 left-0 h-[1px] w-full origin-left bg-saffron transition-transform duration-300 ${
+        <div className="relative hidden min-h-12 w-full px-6 md:block pointer-events-auto">
+          <div
+            style={{ left: activeSubmenuLeft ?? "50%" }}
+            className="absolute top-0 flex w-max max-w-[min(90vw,760px)] -translate-x-1/2 flex-wrap items-center justify-center gap-y-4 px-2 py-2 text-sm tracking-[0.2em]"
+          >
+            {activeSubmenuLinks.map((item, index) => (
+              <div key={item.label} className="flex items-center">
+                <Link
+                  href={item.href}
+                  onClick={handleSubmenuClick}
+                  className={`group relative pb-2 transition-colors duration-300 ${
                     (item.category && isActiveProjectSubmenuLink(item.category)) ||
                     (item.section && isActiveAhamasmiyodhahSubmenuLink(item.section))
-                      ? "scale-x-100"
-                      : "scale-x-0 group-hover:scale-x-100"
+                      ? "text-saffron"
+                      : projectSubmenuTextClass
                   }`}
-                />
-              </Link>
-              {index < activeSubmenuLinks.length - 1 && (
-                <span className={`mx-4 ${projectSubmenuSeparatorClass}`}>/</span>
-              )}
-            </div>
-          ))}
+                >
+                  {item.label}
+                  <span
+                    className={`absolute bottom-0 left-0 h-[1px] w-full origin-left bg-saffron transition-transform duration-300 ${
+                      (item.category && isActiveProjectSubmenuLink(item.category)) ||
+                      (item.section && isActiveAhamasmiyodhahSubmenuLink(item.section))
+                        ? "scale-x-100"
+                        : "scale-x-0 group-hover:scale-x-100"
+                    }`}
+                  />
+                </Link>
+                {index < activeSubmenuLinks.length - 1 && (
+                  <span className={`mx-4 ${projectSubmenuSeparatorClass}`}>/</span>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
       )}
 
       {/* Mobile Menu */}
