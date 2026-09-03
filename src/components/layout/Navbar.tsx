@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -88,9 +88,28 @@ export function Navbar() {
     };
   }, [pathname]);
 
+  const isOverHomeHero = useSyncExternalStore(
+    (onStoreChange) => {
+      window.addEventListener("scroll", onStoreChange, { passive: true });
+      window.addEventListener("resize", onStoreChange);
+
+      return () => {
+        window.removeEventListener("scroll", onStoreChange);
+        window.removeEventListener("resize", onStoreChange);
+      };
+    },
+    () => {
+      if (pathname !== "/") return false;
+
+      const hero = document.querySelector<HTMLElement>(".home-hero");
+      return hero ? hero.getBoundingClientRect().bottom > 0 : true;
+    },
+    () => false,
+  );
   const hasHero = pathname === "/";
-  const showProjectsSubmenu = true;
-  const showAhamasmiyodhahSubmenu = true;
+  const hideSubmenusOverHero = hasHero && isOverHomeHero;
+  const showProjectsSubmenu = !hideSubmenusOverHero;
+  const showAhamasmiyodhahSubmenu = !hideSubmenusOverHero;
   const isDarkBg = hasHero && !isScrolled;
   const textColorClass = isDarkBg ? "text-white" : "text-foreground";
   const projectSubmenuTextClass =
@@ -98,9 +117,9 @@ export function Navbar() {
   const projectSubmenuSeparatorClass =
     isDarkBg ? "text-white/24" : "text-foreground/35";
   const activeSubmenuLinks =
-    activeSubmenu === "projects"
+    !hideSubmenusOverHero && activeSubmenu === "projects"
       ? projectSubmenuLinks
-      : activeSubmenu === "ahamasmiyodhah"
+      : !hideSubmenusOverHero && activeSubmenu === "ahamasmiyodhah"
         ? aySubmenuLinks
         : [];
   const isHomePage = pathname === "/";
@@ -124,22 +143,23 @@ export function Navbar() {
     setActiveSubmenu(null);
     setActiveSubmenuLeft(null);
   };
-  const handleSubmenuClick = (item: SubmenuLink) => {
+  const handleSubmenuClick = () => {
     setActiveSubmenu(null);
     setActiveSubmenuLeft(null);
-
-    if (item.section && pathname === "/ahamasmiyodhah") {
-      window.dispatchEvent(
-        new CustomEvent("ahamasmiyodhah:navigate-section", {
-          detail: { section: item.section },
-        }),
-      );
-    }
   };
-  const handleMobileSubmenuClick = (item: SubmenuLink) => {
-    handleSubmenuClick(item);
+  const handleMobileSubmenuClick = () => {
+    handleSubmenuClick();
     closeMobileMenu();
   };
+
+  useEffect(() => {
+    if (!hideSubmenusOverHero) return;
+
+    window.requestAnimationFrame(() => {
+      setActiveSubmenu(null);
+      setActiveSubmenuLeft(null);
+    });
+  }, [hideSubmenusOverHero]);
 
   return (
     <header
@@ -164,12 +184,20 @@ export function Navbar() {
                 key={link.href}
                 className="relative group/projects"
                 onMouseEnter={(event) => {
-                  if (!showProjectsSubmenu) return;
+                  if (!showProjectsSubmenu) {
+                    setActiveSubmenu(null);
+                    setActiveSubmenuLeft(null);
+                    return;
+                  }
                   setActiveSubmenu("projects");
                   updateSubmenuPosition(event.currentTarget);
                 }}
                 onFocus={(event) => {
-                  if (!showProjectsSubmenu) return;
+                  if (!showProjectsSubmenu) {
+                    setActiveSubmenu(null);
+                    setActiveSubmenuLeft(null);
+                    return;
+                  }
                   setActiveSubmenu("projects");
                   updateSubmenuPosition(event.currentTarget);
                 }}
@@ -187,12 +215,20 @@ export function Navbar() {
                 key={link.href}
                 className="relative group/ay"
                 onMouseEnter={(event) => {
-                  if (!showAhamasmiyodhahSubmenu) return;
+                  if (!showAhamasmiyodhahSubmenu) {
+                    setActiveSubmenu(null);
+                    setActiveSubmenuLeft(null);
+                    return;
+                  }
                   setActiveSubmenu("ahamasmiyodhah");
                   updateSubmenuPosition(event.currentTarget);
                 }}
                 onFocus={(event) => {
-                  if (!showAhamasmiyodhahSubmenu) return;
+                  if (!showAhamasmiyodhahSubmenu) {
+                    setActiveSubmenu(null);
+                    setActiveSubmenuLeft(null);
+                    return;
+                  }
                   setActiveSubmenu("ahamasmiyodhah");
                   updateSubmenuPosition(event.currentTarget);
                 }}
@@ -238,22 +274,17 @@ export function Navbar() {
         </button>
       </div>
 
-      <div
-        className={`relative hidden min-h-12 w-full px-6 md:block ${
-          activeSubmenu ? "pointer-events-auto" : "pointer-events-none"
-        }`}
-      >
+      {activeSubmenuLinks.length > 0 && (
+      <div className="relative hidden w-full px-6 md:block pointer-events-auto">
         <div
           style={{ left: activeSubmenuLeft ?? "50%" }}
-          className={`absolute top-0 flex w-max max-w-[min(90vw,760px)] -translate-x-1/2 flex-wrap items-center justify-center gap-y-4 px-2 py-2 text-sm tracking-[0.2em] transition-opacity duration-200 ${
-            activeSubmenu ? "opacity-100" : "pointer-events-none opacity-0"
-          }`}
+          className="absolute top-0 flex w-max max-w-[min(90vw,760px)] -translate-x-1/2 flex-wrap items-center justify-center gap-y-4 px-2 py-2 text-sm tracking-[0.2em]"
         >
           {activeSubmenuLinks.map((item, index) => (
             <div key={item.label} className="flex items-center">
               <Link
                 href={item.href}
-                onClick={() => handleSubmenuClick(item)}
+                onClick={handleSubmenuClick}
                 className={`group relative pb-2 transition-colors duration-300 ${
                   (item.category && isActiveProjectSubmenuLink(item.category)) ||
                   (item.section && isActiveAhamasmiyodhahSubmenuLink(item.section))
@@ -278,6 +309,7 @@ export function Navbar() {
           ))}
         </div>
       </div>
+      )}
 
       {/* Mobile Menu */}
       <AnimatePresence>
@@ -313,7 +345,7 @@ export function Navbar() {
                         <div key={item.category} className="flex items-center">
                           <Link
                             href={item.href}
-                            onClick={() => handleMobileSubmenuClick(item)}
+                            onClick={handleMobileSubmenuClick}
                             className={`group relative inline-flex min-h-9 items-center justify-center pb-1 transition-colors duration-300 ${
                               isActiveProjectSubmenuLink(item.category)
                                 ? "text-saffron"
@@ -342,7 +374,7 @@ export function Navbar() {
                         <div key={item.href} className="flex items-center">
                           <Link
                             href={item.href}
-                            onClick={() => handleMobileSubmenuClick(item)}
+                            onClick={handleMobileSubmenuClick}
                             className={`group relative inline-flex min-h-9 items-center justify-center pb-1 transition-colors duration-300 ${
                               item.section && isActiveAhamasmiyodhahSubmenuLink(item.section)
                                 ? "text-saffron"

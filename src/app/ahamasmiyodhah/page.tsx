@@ -14,8 +14,6 @@ const fadeUp: Variants = {
 
 type ActiveTab = "academy" | "design-research";
 
-type NavigateSectionEvent = CustomEvent<{ section: ActiveTab }>;
-
 type PublicationSpread = {
   src: string;
   alt: string;
@@ -167,6 +165,10 @@ const academyCredentials = [
 
 function isActiveTab(value: unknown): value is ActiveTab {
   return value === "academy" || value === "design-research";
+}
+
+function getTabHash(tab: ActiveTab) {
+  return `#${tab}`;
 }
 
 const publications: Publication[] = [
@@ -925,23 +927,46 @@ export default function AhamasmiyodhahPage() {
       }
     };
 
-    const handleSectionNavigation = (event: Event) => {
-      const section = (event as NavigateSectionEvent).detail?.section;
+    const handleSamePageHashClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+      }
 
-      if (isActiveTab(section)) {
-        selectTabFromNavigation(section, true);
+      const target = event.target instanceof Element ? event.target : null;
+      const link = target?.closest<HTMLAnchorElement>("a[href]");
+
+      if (!link) return;
+
+      const url = new URL(link.href);
+      const hashTab = url.hash.replace("#", "");
+
+      if (
+        url.origin !== window.location.origin ||
+        url.pathname !== window.location.pathname ||
+        !isActiveTab(hashTab)
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+
+      if (window.location.hash !== url.hash) {
+        window.history.pushState(null, "", url.hash);
+        window.dispatchEvent(new HashChangeEvent("hashchange"));
+      } else {
+        selectTabFromNavigation(hashTab, true);
       }
     };
 
     selectHashTab();
     window.addEventListener("hashchange", selectHashTab);
     window.addEventListener("popstate", selectHashTab);
-    window.addEventListener("ahamasmiyodhah:navigate-section", handleSectionNavigation);
+    document.addEventListener("click", handleSamePageHashClick, true);
 
     return () => {
       window.removeEventListener("hashchange", selectHashTab);
       window.removeEventListener("popstate", selectHashTab);
-      window.removeEventListener("ahamasmiyodhah:navigate-section", handleSectionNavigation);
+      document.removeEventListener("click", handleSamePageHashClick, true);
     };
   }, [selectTabFromNavigation]);
 
@@ -981,8 +1006,14 @@ export default function AhamasmiyodhahPage() {
   };
 
   const selectTab = (tab: ActiveTab) => {
-    window.history.pushState(null, "", tab === "academy" ? "#academy" : "#design-research");
-    selectTabFromNavigation(tab, true);
+    const hash = getTabHash(tab);
+
+    if (window.location.hash !== hash) {
+      window.history.pushState(null, "", hash);
+      window.dispatchEvent(new HashChangeEvent("hashchange"));
+    } else {
+      selectTabFromNavigation(tab, true);
+    }
   };
 
   const openPublication = (publication: Publication, spreadIndex: number, trigger: HTMLElement) => {
