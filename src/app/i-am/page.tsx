@@ -231,7 +231,7 @@ const institutionalCollaborator = {
   title: ["Indian Taekwondo", "Kick Boxing", "Association"],
   logo: "/images/collaborators/logos/itkba.png",
   logoAlt: "Indian Taekwondo Kick Boxing Association logo",
-  description: "Part of Ahamasmi’s martial arts and educational network.",
+  description: "Grandmaster of Deccan Taekwondo Academy and Martial Arts teacher of Ar. Niket Sunil Upase.",
 };
 
 const deccanTaekwondoAcademy = {
@@ -239,7 +239,7 @@ const deccanTaekwondoAcademy = {
   title: ["DECCAN TAEKWONDO", "ACADEMY"],
   logo: "/images/academy/world-taekwondo-logo.png",
   logoAlt: "World Taekwondo logo",
-  description: "Part of Ahamasmi’s martial arts and educational network.",
+  description: "Grandmaster of Deccan Taekwondo Academy and Martial Arts teacher of Ar. Niket Sunil Upase.",
 };
 
 type InstitutionalOrganisation = {
