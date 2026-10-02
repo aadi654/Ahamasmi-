@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
@@ -14,9 +15,158 @@ const fadeUp: Variants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.76, 0, 0.24, 1] } },
 };
 
-const stagger: Variants = {
-  visible: { transition: { staggerChildren: 0.1 } },
-};
+const heroLogoMetrics = {
+  imageWidth: 1658,
+  horizontalLineStartX: 501,
+  horizontalLineEndX: 1343,
+} as const;
+
+const brandLineStartRatio = heroLogoMetrics.horizontalLineStartX / heroLogoMetrics.imageWidth;
+const brandLineEndRatio = heroLogoMetrics.horizontalLineEndX / heroLogoMetrics.imageWidth;
+const brandTrackingRatio = 0.19;
+
+function HeroBrandName() {
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const boldRef = useRef<HTMLSpanElement>(null);
+  const regularRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    const heading = headingRef.current;
+    const boldText = boldRef.current;
+    const regularText = regularRef.current;
+    const frame = heading?.closest<HTMLElement>(".hero-artwork-frame");
+    if (!heading || !boldText || !regularText || !frame) return;
+
+    const canvas = document.createElement("canvas");
+    const context = canvas.getContext("2d");
+    if (!context) return;
+
+    let animationFrame = 0;
+    let cancelled = false;
+
+    const textRuns = [
+      { text: "AHAMASMI", weight: 700 },
+      { text: " ", weight: 400 },
+      { text: "ARCHITECT", weight: 400 },
+    ] as const;
+
+    const measureBrand = (fontSize: number, letterSpacing: number, fontFamily: string) => {
+      let cursor = 0;
+      let visibleLeft = Number.POSITIVE_INFINITY;
+      let visibleRight = Number.NEGATIVE_INFINITY;
+
+      for (const run of textRuns) {
+        context.font = `${run.weight} ${fontSize}px ${fontFamily}`;
+
+        for (const character of run.text) {
+          const metrics = context.measureText(character);
+          const glyphLeft = cursor - metrics.actualBoundingBoxLeft;
+          const glyphRight = cursor + metrics.actualBoundingBoxRight;
+
+          if (character !== " ") {
+            visibleLeft = Math.min(visibleLeft, glyphLeft);
+            visibleRight = Math.max(visibleRight, glyphRight);
+          }
+
+          cursor += metrics.width + letterSpacing;
+        }
+      }
+
+      return {
+        left: Number.isFinite(visibleLeft) ? visibleLeft : 0,
+        right: Number.isFinite(visibleRight) ? visibleRight : cursor,
+        width: Number.isFinite(visibleLeft) && Number.isFinite(visibleRight) ? visibleRight - visibleLeft : cursor,
+      };
+    };
+
+    const fitBrandToLine = () => {
+      if (cancelled) return;
+
+      const frameWidth = frame.getBoundingClientRect().width;
+      if (!frameWidth) return;
+
+      const targetLeft = frameWidth * brandLineStartRatio;
+      const targetWidth = frameWidth * (brandLineEndRatio - brandLineStartRatio);
+      const fontFamily = window.getComputedStyle(heading).fontFamily;
+
+      let low = 6;
+      let high = Math.max(12, targetWidth / 6);
+
+      for (let index = 0; index < 28; index += 1) {
+        const mid = (low + high) / 2;
+        const measured = measureBrand(mid, mid * brandTrackingRatio, fontFamily);
+
+        if (measured.width > targetWidth) {
+          high = mid;
+        } else {
+          low = mid;
+        }
+      }
+
+      let fontSize = low;
+      let letterSpacing = fontSize * brandTrackingRatio;
+      const measured = measureBrand(fontSize, letterSpacing, fontFamily);
+      let headingLeft = targetLeft - measured.left;
+
+      heading.style.setProperty("--hero-brand-left", `${headingLeft}px`);
+      heading.style.setProperty("--hero-brand-font-size", `${fontSize}px`);
+      heading.style.setProperty("--hero-brand-letter-spacing", `${letterSpacing}px`);
+
+      for (let index = 0; index < 2; index += 1) {
+        const frameLeft = frame.getBoundingClientRect().left;
+        const boldRect = boldText.getBoundingClientRect();
+        const regularRect = regularText.getBoundingClientRect();
+        const renderedLeft = boldRect.left - frameLeft;
+        const renderedRight = regularRect.right - frameLeft - letterSpacing;
+        const renderedWidth = renderedRight - renderedLeft;
+
+        if (renderedWidth > 0) {
+          const correction = targetWidth / renderedWidth;
+          fontSize *= correction;
+          letterSpacing *= correction;
+
+          heading.style.setProperty("--hero-brand-font-size", `${fontSize}px`);
+          heading.style.setProperty("--hero-brand-letter-spacing", `${letterSpacing}px`);
+        }
+      }
+
+      const frameLeft = frame.getBoundingClientRect().left;
+      const boldRect = boldText.getBoundingClientRect();
+      headingLeft += targetLeft - (boldRect.left - frameLeft);
+      heading.style.setProperty("--hero-brand-left", `${headingLeft}px`);
+    };
+
+    const scheduleFit = () => {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = window.requestAnimationFrame(fitBrandToLine);
+    };
+
+    const resizeObserver = new ResizeObserver(scheduleFit);
+    resizeObserver.observe(frame);
+
+    scheduleFit();
+    document.fonts?.ready.then(scheduleFit);
+    document.fonts?.addEventListener("loadingdone", scheduleFit);
+    window.addEventListener("resize", scheduleFit);
+    window.addEventListener("orientationchange", scheduleFit);
+
+    return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(animationFrame);
+      resizeObserver.disconnect();
+      document.fonts?.removeEventListener("loadingdone", scheduleFit);
+      window.removeEventListener("resize", scheduleFit);
+      window.removeEventListener("orientationchange", scheduleFit);
+    };
+  }, []);
+
+  return (
+    <h1 ref={headingRef} className="hero-brand-name" aria-label="Ahamasmi Architect">
+      <span ref={boldRef} className="hero-brand-ahamasmi">AHAMASMI</span>{" "}
+      <span ref={regularRef} className="hero-brand-architect">ARCHITECT</span>
+    </h1>
+  );
+}
 
 export default function Home() {
   const featuredProjects = getFeaturedProjects().slice(0, 2);
@@ -25,187 +175,127 @@ export default function Home() {
     <div className="bg-background">
       {/* Hero Section */}
       <section className="home-hero relative w-full overflow-hidden">
-        <Image
-          src="/ahamasmi-hero-orange-background-clean.jpeg"
-          alt="Ahamasmi Architecture Hero"
-          fill
-          sizes="100vw"
-          className="hero-artwork object-cover"
-          priority
-        />
-        <div className="hero-symbol-region absolute pointer-events-none" aria-hidden="true">
+        <div className="hero-artwork-frame absolute pointer-events-none">
           <Image
-            src="/ahamasmi-saraswati-symbol.png"
+            src="/ahamasmi-hero-line-art.png"
             alt=""
             fill
-            sizes="(min-width: 1024px) 48vw, 76vw"
-            className="saraswati-symbol object-contain"
+            sizes="100vw"
+            className="hero-logo-artwork object-contain"
             priority
           />
+          <HeroBrandName />
         </div>
-        <div className="absolute inset-0 bg-black/5" />
-        
-        <div className="hero-copy-layer absolute inset-0 z-10 flex flex-col justify-end">
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={stagger}
-            className="hero-copy text-white"
-          >
-            <motion.h1 variants={fadeUp} className="hero-heading text-[clamp(3rem,13vw,3.75rem)] md:text-[clamp(4rem,8vw,5rem)] lg:text-[clamp(4.5rem,8.2vw,7rem)] font-light leading-[0.98] tracking-[-0.03em] mb-4">
-              Architecturing
-            </motion.h1>
-            <motion.h1 variants={fadeUp} className="hero-heading text-[clamp(3rem,13vw,3.75rem)] md:text-[clamp(4rem,8vw,5rem)] lg:text-[clamp(4.5rem,8.2vw,7rem)] font-light leading-[0.98] tracking-[-0.03em] mb-8 md:mb-12">
-              Lines for Lives
-            </motion.h1>
-            <motion.p variants={fadeUp} className="max-w-4xl text-base font-light leading-[1.45] tracking-wide opacity-90 md:text-xl">
-              <span className="lg:block">Because every life is different, every space deserves its own story.</span>{" "}
-              <span className="lg:block">We craft architecture that is deeply personal, purposeful, and uniquely yours.</span>
-            </motion.p>
-          </motion.div>
-        </div>
+        <p className="hero-signature">I am Architect</p>
         <style jsx global>{`
           .home-hero {
-            --hero-nav-safe-zone: clamp(6.5rem, 13svh, 9rem);
-            --hero-nav-space: var(--hero-nav-safe-zone);
-            --hero-bottom-space: clamp(2rem, 5svh, 4rem);
-            --hero-inline-space: clamp(1.5rem, 4vw, 6rem);
             min-height: 100vh;
             min-height: 100svh;
-            background: #df7100;
+            background: #e27703;
           }
 
-          .hero-artwork {
+          .hero-artwork-frame {
+            --hero-brand-left: ${brandLineStartRatio * 100}%;
+            --hero-brand-font-size: clamp(0.9rem, 3.6vw, 3.875rem);
+            --hero-brand-letter-spacing: clamp(0.16em, 0.65vw, 0.22em);
+            aspect-ratio: 1658 / 949;
+            left: 50%;
+            top: 50%;
+            width: min(103.625rem, 100vw);
+            transform: translate(-50%, -50%);
+          }
+
+          .hero-logo-artwork {
             object-position: center center;
-            transform-origin: center;
           }
 
-          .hero-symbol-region {
-            top: calc(var(--hero-nav-safe-zone) + clamp(1.5rem, 3svh, 3rem));
-            right: clamp(1.5rem, 5vw, 6rem);
-            bottom: var(--hero-bottom-space);
-            width: min(46vw, 54rem);
+          .hero-brand-name,
+          .hero-signature {
+            color: #fff;
+            font-style: normal;
           }
 
-          .saraswati-symbol {
-            object-position: center center;
+          .hero-brand-name {
+            align-items: baseline;
+            display: block;
+            font-size: var(--hero-brand-font-size);
+            left: var(--hero-brand-left);
+            letter-spacing: var(--hero-brand-letter-spacing);
+            line-height: 0.9;
+            margin: 0;
+            position: absolute;
+            top: 53.25%;
+            white-space: nowrap;
+            width: max-content;
           }
 
-          .hero-copy-layer {
-            padding: var(--hero-nav-space) var(--hero-inline-space) var(--hero-bottom-space);
+          .hero-brand-ahamasmi {
+            font-weight: 700;
           }
 
-          .hero-copy {
-            max-width: min(54rem, 100%);
+          .hero-brand-architect {
+            font-weight: 400;
           }
 
-          .hero-heading {
-            font-size: clamp(3rem, 13vw, 3.75rem);
+          .hero-signature {
+            bottom: clamp(1.75rem, 5.25vw, 3.45rem);
+            font-size: clamp(1.05rem, 1.57vw, 1.625rem);
+            font-weight: 400;
+            line-height: 1;
+            margin: 0;
+            position: absolute;
+            right: clamp(1.5rem, 3vw, 3.45rem);
+            z-index: 1;
           }
 
-          @media (min-width: 768px) {
-            .hero-heading {
-              font-size: clamp(4rem, 8vw, 5rem);
-            }
-          }
-
-          @media (min-width: 1024px) {
-            .home-hero {
-              --hero-bottom-space: clamp(2.5rem, 6svh, 5rem);
-            }
-
-            .hero-copy {
-              max-width: min(47rem, calc(52vw - var(--hero-inline-space)));
-            }
-
-            .hero-heading {
-              font-size: clamp(4.5rem, min(8.2vw, 13svh), 7rem);
-            }
-          }
-
-          @media (min-width: 1024px) and (max-height: 850px) {
-            .home-hero {
-              --hero-nav-safe-zone: clamp(6rem, 16svh, 7.5rem);
-              --hero-nav-space: var(--hero-nav-safe-zone);
-              --hero-bottom-space: clamp(1.5rem, 4svh, 2.5rem);
-            }
-
-            .hero-symbol-region {
-              top: calc(var(--hero-nav-safe-zone) + clamp(1rem, 2svh, 1.75rem));
-              bottom: 1.5rem;
-              width: min(41vw, 44rem);
-            }
-
-            .hero-heading {
-              font-size: clamp(4rem, min(6.2vw, 12svh), 5.6rem);
+          @media (min-width: 768px) and (max-width: 1023px) {
+            .hero-artwork-frame {
+              top: 42svh;
             }
           }
 
-          @media (min-width: 1400px) and (max-height: 1150px) {
-            .home-hero {
-              --hero-nav-safe-zone: clamp(7rem, 14svh, 9rem);
-              --hero-nav-space: var(--hero-nav-safe-zone);
-              --hero-bottom-space: clamp(2.5rem, 5svh, 4rem);
-            }
-
-            .hero-symbol-region {
-              top: calc(var(--hero-nav-safe-zone) + clamp(1.25rem, 2.5svh, 2.75rem));
-              bottom: var(--hero-bottom-space);
-              width: min(44vw, 52rem);
-            }
-          }
-
-          @media (min-width: 1024px) and (max-width: 1100px) {
-            .hero-symbol-region {
-              right: clamp(1.5rem, 4vw, 3rem);
-              width: min(40vw, 27rem);
-            }
-
-            .hero-heading {
-              font-size: clamp(3.5rem, 6.2vw, 4rem);
-            }
-          }
-
-          @media (min-width: 1024px) and (max-height: 720px) {
-            .home-hero {
-              --hero-nav-safe-zone: clamp(5.75rem, 16svh, 6.75rem);
-              --hero-nav-space: var(--hero-nav-safe-zone);
-              --hero-bottom-space: clamp(1.25rem, 3svh, 2rem);
-            }
-
-            .hero-symbol-region {
-              top: calc(var(--hero-nav-safe-zone) + clamp(0.75rem, 2svh, 1.25rem));
-              bottom: var(--hero-bottom-space);
-              width: min(39vw, 38rem);
-            }
-
-            .hero-copy {
-              max-width: min(42rem, calc(50vw - var(--hero-inline-space)));
-            }
-          }
-
-          @media (min-width: 1024px) and (min-aspect-ratio: 12 / 5) and (max-height: 920px) {
-            .hero-symbol-region {
-              width: min(40vw, 44rem);
+          @media (max-height: 720px) and (min-aspect-ratio: 2 / 1) {
+            .hero-artwork-frame {
+              width: min(103.625rem, 100vw, calc(100svh * 1658 / 949));
             }
           }
 
           @media (max-width: 767px) {
+            .hero-artwork-frame {
+              top: max(12rem, 34svh);
+              width: min(103.625rem, 100vw, calc(62svh * 1658 / 949));
+            }
+
+            .hero-brand-name {
+              font-size: var(--hero-brand-font-size);
+              letter-spacing: var(--hero-brand-letter-spacing);
+            }
+
+            .hero-signature {
+              bottom: clamp(1.5rem, 8svh, 3rem);
+              right: clamp(1.25rem, 6vw, 2rem);
+            }
+          }
+
+          @media (max-height: 500px) and (orientation: landscape) {
             .home-hero {
-              --hero-nav-space: clamp(5.5rem, 13svh, 7rem);
-              --hero-bottom-space: clamp(2rem, 6svh, 3.5rem);
+              min-height: 42rem;
             }
 
-            .hero-artwork {
-              object-position: center center;
+            .hero-artwork-frame {
+              top: 20.625rem;
+              width: min(48.75rem, calc(100vw - 2rem));
             }
 
-            .hero-symbol-region {
-              top: var(--hero-nav-space);
-              right: 50%;
-              bottom: clamp(12rem, 28svh, 16rem);
-              width: min(76vw, 22rem);
-              transform: translateX(50%);
+            .hero-signature {
+              bottom: 2rem;
+            }
+          }
+
+          @media (max-width: 380px) {
+            .hero-brand-name {
+              font-size: var(--hero-brand-font-size);
+              letter-spacing: var(--hero-brand-letter-spacing);
             }
           }
         `}</style>

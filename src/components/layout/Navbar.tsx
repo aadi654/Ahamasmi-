@@ -107,6 +107,7 @@ export function Navbar() {
     () => false,
   );
   const hasHero = pathname === "/";
+  const isLandingHeroNav = hasHero && isOverHomeHero;
   const hideSubmenusOverHero = hasHero && isOverHomeHero;
   const showProjectsSubmenu = !hideSubmenusOverHero;
   const showAhamasmiyodhahSubmenu = !hideSubmenusOverHero;
@@ -131,7 +132,9 @@ export function Navbar() {
     pathname === "/ahamasmiyodhah" && currentHash === `#${section}`;
   const showPersistentActiveState = (href: string) => isActiveLink(href) && !isHomePage;
   const getLinkTextClass = (href: string) => (showPersistentActiveState(href) ? "text-saffron" : textColorClass);
+  const getLinkHoverClass = () => (isLandingHeroNav ? "hover:text-white focus:text-white" : "hover:text-saffron focus:text-saffron");
   const getUnderlineClass = (href: string) => (showPersistentActiveState(href) ? "w-full" : "w-0 group-hover:w-full");
+  const getUnderlineColorClass = () => (isLandingHeroNav ? "bg-white/80" : "bg-saffron");
   const getMobileLinkTextClass = (href: string) => (showPersistentActiveState(href) ? "text-saffron" : "text-foreground");
   const getMobileUnderlineClass = (href: string) => (showPersistentActiveState(href) ? "w-[calc(100%-2rem)]" : "w-0 group-hover:w-[calc(100%-2rem)]");
   const updateSubmenuPosition = (element: HTMLElement) => {
@@ -171,13 +174,23 @@ export function Navbar() {
         !hasHero || isScrolled ? "bg-background/80 backdrop-blur-md" : "bg-transparent"
       }`}
     >
-      <div className="container mx-auto px-6 h-24 flex items-center justify-between pointer-events-auto">
-        <Link href="/" className={`-translate-x-2 text-3xl tracking-widest uppercase font-medium z-50 transition-colors duration-300 ${textColorClass}`}>
+      <div className={`container relative mx-auto h-24 px-6 pointer-events-auto ${
+        isLandingHeroNav ? "flex items-center justify-end md:justify-center" : "flex items-center justify-between"
+      }`}>
+        <Link href="/" className={`-translate-x-2 text-3xl tracking-widest uppercase font-medium z-50 transition-colors duration-300 ${
+          isLandingHeroNav ? "hidden" : textColorClass
+        }`}>
           Ahamasmi Architect
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden translate-x-6 md:flex gap-10">
+        <nav
+          className={`hidden md:flex ${
+            isLandingHeroNav
+              ? "absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 gap-10 lg:gap-12"
+              : "translate-x-6 gap-10"
+          }`}
+        >
           {links.map((link) => (
             link.label === "Projects" ? (
               <div
@@ -204,10 +217,10 @@ export function Navbar() {
               >
                 <Link
                   href={link.href}
-                  className={`text-lg tracking-wide transition-colors duration-300 relative group ${getLinkTextClass(link.href)} hover:text-saffron`}
+                  className={`relative group text-lg font-normal tracking-wide transition-colors duration-300 ${getLinkTextClass(link.href)} ${getLinkHoverClass()}`}
                 >
                   {link.label}
-                  <span className={`absolute -bottom-1 left-0 h-[1px] bg-saffron transition-all duration-300 ${getUnderlineClass(link.href)}`} />
+                  <span className={`absolute -bottom-1 left-0 h-[1px] transition-all duration-300 ${getUnderlineColorClass()} ${getUnderlineClass(link.href)}`} />
                 </Link>
               </div>
             ) : link.label === "Ahamasmiyodhah" ? (
@@ -235,10 +248,10 @@ export function Navbar() {
               >
                 <Link
                   href={link.href}
-                  className={`text-lg tracking-wide transition-colors duration-300 relative group ${getLinkTextClass(link.href)} hover:text-saffron`}
+                  className={`relative group text-lg font-normal tracking-wide transition-colors duration-300 ${getLinkTextClass(link.href)} ${getLinkHoverClass()}`}
                 >
                   {link.label}
-                  <span className={`absolute -bottom-1 left-0 h-[1px] bg-saffron transition-all duration-300 ${getUnderlineClass(link.href)}`} />
+                  <span className={`absolute -bottom-1 left-0 h-[1px] transition-all duration-300 ${getUnderlineColorClass()} ${getUnderlineClass(link.href)}`} />
                 </Link>
               </div>
             ) : (
@@ -253,10 +266,10 @@ export function Navbar() {
                   setActiveSubmenu(null);
                   setActiveSubmenuLeft(null);
                 }}
-                className={`text-lg ${link.label === "I AM" ? "tracking-[0.14em]" : "tracking-wide"} transition-colors duration-300 relative group ${getLinkTextClass(link.href)} hover:text-saffron`}
+                className={`relative group text-lg font-normal ${link.label === "I AM" ? "tracking-[0.14em]" : "tracking-wide"} transition-colors duration-300 ${getLinkTextClass(link.href)} ${getLinkHoverClass()}`}
               >
                 {link.label}
-                <span className={`absolute -bottom-1 left-0 h-[1px] bg-saffron transition-all duration-300 ${getUnderlineClass(link.href)}`} />
+                <span className={`absolute -bottom-1 left-0 h-[1px] transition-all duration-300 ${getUnderlineColorClass()} ${getUnderlineClass(link.href)}`} />
               </Link>
             )
           ))}
@@ -322,7 +335,10 @@ export function Navbar() {
             transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
             className="pointer-events-auto fixed inset-0 bg-background z-40 flex flex-col items-center justify-center"
           >
-            <nav className="pointer-events-auto flex flex-col gap-8 text-center" aria-label="Mobile navigation">
+            <nav
+              className="pointer-events-auto flex flex-col gap-8 text-center"
+              aria-label="Mobile navigation"
+            >
               {links.map((link, i) => (
                 <motion.div
                   key={link.href}

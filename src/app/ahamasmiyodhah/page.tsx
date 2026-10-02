@@ -132,6 +132,7 @@ const academyLead = {
   rank: "Black Belt, 3rd Dan",
   academy: "Deccan Taekwondo Academy",
   federation: "World Taekwondo Federation",
+  association: "Black Belt - Indian Taekwondo Kick Boxing Association",
   image: "/images/academy/academy-lead.jpeg",
 } as const;
 
@@ -825,6 +826,7 @@ const AcademyCredentials = () => {
                 <p className="mt-2 text-sm leading-relaxed text-muted">{academyLead.rank}</p>
                 <p className="text-sm leading-relaxed text-muted">{academyLead.academy}</p>
                 <p className="text-sm leading-relaxed text-muted">{academyLead.federation}</p>
+                <p className="text-sm leading-relaxed text-muted">{academyLead.association}</p>
               </div>
             </div>
 
