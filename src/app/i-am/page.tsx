@@ -59,13 +59,6 @@ const studioTeam: StudioProfile[] = [
     imagePosition: "center 32%",
   },
   {
-    name: "Nandini Choudhary",
-    role: "Interior Designer",
-    image: "/images/team/nandini-choudhary.jpg",
-    alt: "Nandini Choudhary, Interior Designer",
-    imagePosition: "center 28%",
-  },
-  {
     name: "Saraswathi Shette",
     role: "BIM Engineer",
     image: "/images/team/saraswathi-shette.jpg",
@@ -774,7 +767,7 @@ export default function IAmPage() {
               whileInView="visible"
               viewport={{ once: true, margin: "-80px" }}
               variants={stagger}
-              className="mx-auto grid max-w-4xl grid-cols-1 gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 xl:gap-x-9 xl:gap-y-12"
+              className="mx-auto grid max-w-4xl grid-cols-1 gap-x-10 gap-y-14 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-9 xl:gap-y-12"
             >
               {studioTeam.map((member) => (
                 <TeamProfile
