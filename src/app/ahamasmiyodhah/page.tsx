@@ -740,7 +740,7 @@ const SelectedPublications = ({ onOpen, shouldReduceMotion }: SelectedPublicatio
         id="selected-publications-heading"
         className="text-3xl font-light leading-tight tracking-tight text-foreground md:text-5xl"
       >
-        Research made visible.
+        Architecture research made visible.
       </h2>
       <p className="mt-6 max-w-2xl text-base leading-relaxed tracking-wide text-muted md:text-lg">
         Essays, material studies, and published conversations exploring architecture,
