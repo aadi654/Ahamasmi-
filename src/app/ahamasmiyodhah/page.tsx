@@ -59,7 +59,7 @@ const sections: Array<{
     label: "Academy",
     title: "A focused learning environment for taekwondo and personal growth.",
     body: [
-      "The academy introduces structured training, student development, workshops, and educational programming. Final content can include class formats, instructors, curriculum, registrations, and the Deccan Taekwondo Academy relationship.",
+      "The academy introduces structured training, student development, workshops, and educational programming. It includes class formats, instructors, curriculum, registrations, and World Taekwondo  and Indian Taekwondo affiliation.",
     ],
   },
   {
@@ -117,12 +117,12 @@ const initialAcademyFormData: AcademyFormData = {
 const academyAffiliations = [
   {
     name: "World Taekwondo",
-    caption: "International affiliation",
+    caption: "International Taekwondo affiliation",
     logo: "/images/academy/world-taekwondo-logo.png",
   },
   {
     name: "ITKBA",
-    caption: "Martial arts affiliation",
+    caption: "Indian Martial Arts affiliation",
     logo: "/images/academy/itkba-logo.png",
   },
 ] as const;
@@ -823,10 +823,14 @@ const AcademyCredentials = () => {
                 <p className="text-sm font-medium uppercase tracking-[0.2em] text-foreground">
                   {academyLead.name}
                 </p>
-                <p className="mt-2 text-sm leading-relaxed text-muted">{academyLead.rank}</p>
-                <p className="text-sm leading-relaxed text-muted">{academyLead.academy}</p>
-                <p className="text-sm leading-relaxed text-muted">{academyLead.federation}</p>
-                <p className="text-sm leading-relaxed text-muted">{academyLead.association}</p>
+                <ul className="mt-2 list-disc space-y-3 pl-5 text-sm leading-relaxed text-muted">
+                  <li>
+                    <span className="block">{academyLead.rank}</span>
+                    <span className="block">{academyLead.academy}</span>
+                    <span className="block">{academyLead.federation}</span>
+                  </li>
+                  <li>{academyLead.association}</li>
+                </ul>
               </div>
             </div>
 
@@ -1100,7 +1104,7 @@ Comment: ${formData.comment.trim() || "Not specified"}`;
             Education through discipline, movement, and culture.
           </h1>
           <p className="text-xl md:text-2xl text-muted font-light leading-relaxed max-w-3xl">
-            A class 42 registered educational initiative exploring martial arts, research, and education through a people-centric lens.
+            Ahamasmiyodhah is a class 41 registered educational initiative exploring martial arts and architecture research, and every education through a people-centric lens.
           </p>
 
           <div
