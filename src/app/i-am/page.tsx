@@ -211,7 +211,7 @@ const technologyCollaborators: TechnologyCollaborator[] = [
   {
     name: "Aditya Deshpande",
     role: "Digital Product & Technology Partner",
-    detail: "Web Platforms & Digital Systems",
+    detail: "Web Platforms + Digital Systems Head",
     image: "/images/collaborators/aditya-deshpande.jpg",
     alt: "Aditya Deshpande - Digital Product and Technology Partner",
     objectPosition: "30% center",
@@ -662,7 +662,7 @@ const InstitutionalCollaboratorFeature = () => (
 
 export default function IAmPage() {
   return (
-    <div className="bg-background min-h-screen pt-32 pb-32 text-foreground">
+    <div className="bg-background min-h-screen pt-28 pb-32 text-foreground">
       <section className="container mx-auto px-6">
         <motion.div
           initial="hidden"
@@ -687,9 +687,7 @@ export default function IAmPage() {
                 variants={fadeUp}
                 className="max-w-5xl text-5xl font-light leading-[1.02] tracking-tight text-balance sm:text-6xl md:text-7xl lg:text-8xl"
               >
-                Ahamasmi.
-                <br />
-                I am, therefore I create.
+                Ahamasmi means &apos;I am&apos;, therefore I create.
               </motion.h1>
             </div>
           </div>
