@@ -12,7 +12,16 @@ const fadeUp: Variants = {
 const MAX_FILES = 5;
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const WHATSAPP_NUMBER = "919270384782";
-const PROJECT_TYPES = ["Residential", "Commercial", "Cultural", "Other"] as const;
+const PROJECT_TYPES = [
+  "Architecture",
+  "Interior",
+  "BIM",
+  "Urban Design",
+  "Design & Research",
+  "Martial Arts Academy",
+  "Repair & Maintenance Services",
+  "Others",
+] as const;
 
 type ProjectType = (typeof PROJECT_TYPES)[number] | "";
 
@@ -188,11 +197,11 @@ Thank you.`;
           >
             <h1 className="text-5xl md:text-8xl font-light tracking-tighter mb-8">Namaste.</h1>
             <p className="text-xl text-muted font-light mb-16 max-w-sm leading-relaxed">
-              We design spaces you imagine into places you can experience.<br />
-              From your requirements to your dreams, we shape environments that feel personal, purposeful, and alive.
+              We design spaces you imagine and create it for you experience.<br />
+              We transform your spatial dream requirements into reality. We design spaces that exhibits personal, purposeful, thoughtful and alive.
               <br />
               <br />
-              Architecture for life, guided by people-centric design, is the DNA of our firm.
+              People centric architecture design is the DNA of Ahamasmi.
             </p>
             
             <div className="space-y-8">
@@ -295,7 +304,7 @@ Thank you.`;
                 <p className="block text-muted text-xs uppercase tracking-widest mb-3 group-focus-within:text-saffron transition-colors">
                   Project Type *
                 </p>
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4" role="radiogroup" aria-label="Project Type">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4" role="radiogroup" aria-label="Project Type">
                   {PROJECT_TYPES.map((projectType) => {
                     const isSelected = formData.projectType === projectType;
 
@@ -306,7 +315,7 @@ Thank you.`;
                         role="radio"
                         aria-checked={isSelected}
                         onClick={() => updateField("projectType", projectType)}
-                        className={`rounded-full border px-4 py-3 text-xs uppercase tracking-widest transition-colors focus:outline-none focus:border-saffron ${
+                        className={`rounded-full border px-4 py-3 text-xs uppercase tracking-widest transition-colors focus:outline-none focus:border-saffron whitespace-normal break-words ${
                           isSelected
                             ? "border-saffron bg-saffron text-background"
                             : "border-foreground/20 text-muted hover:border-saffron hover:text-foreground"
