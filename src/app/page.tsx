@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight } from "lucide-react";
@@ -168,6 +167,73 @@ function HeroBrandName() {
   );
 }
 
+function HeroLogoArtwork() {
+  return (
+    <svg
+      className="hero-logo-artwork"
+      viewBox="0 0 1658 949"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <defs>
+        <linearGradient id="heroLeftVerticalFade" x1="0" y1="64" x2="0" y2="463" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="white" stopOpacity="0.05" />
+          <stop offset="0.43" stopColor="white" stopOpacity="0.2" />
+          <stop offset="0.58" stopColor="white" stopOpacity="1" />
+          <stop offset="1" stopColor="white" stopOpacity="1" />
+        </linearGradient>
+        <linearGradient id="heroRightVerticalFade" x1="0" y1="-3000" x2="0" y2="463" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="white" stopOpacity="0" />
+          <stop offset="0.55" stopColor="white" stopOpacity="0.05" />
+          <stop offset="0.82" stopColor="white" stopOpacity="0.22" />
+          <stop offset="0.94" stopColor="white" stopOpacity="1" />
+          <stop offset="1" stopColor="white" stopOpacity="1" />
+        </linearGradient>
+        <linearGradient id="heroHorizontalExtensionFade" x1="501" y1="0" x2="6000" y2="0" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="white" stopOpacity="1" />
+          <stop offset="0.42" stopColor="white" stopOpacity="1" />
+          <stop offset="0.64" stopColor="white" stopOpacity="0.16" />
+          <stop offset="1" stopColor="white" stopOpacity="0" />
+        </linearGradient>
+        <linearGradient id="heroSlantFade" x1="462" y1="317" x2="-400" y2="4000" gradientUnits="userSpaceOnUse">
+          <stop offset="0" stopColor="white" stopOpacity="1" />
+          <stop offset="0.28" stopColor="white" stopOpacity="1" />
+          <stop offset="0.48" stopColor="white" stopOpacity="0.28" />
+          <stop offset="1" stopColor="white" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      <path
+        d="M 462 317 L -400 4000"
+        fill="none"
+        stroke="url(#heroSlantFade)"
+        strokeLinecap="butt"
+        strokeWidth="6"
+      />
+      <path
+        d="M 501 64 L 501 463"
+        fill="none"
+        stroke="url(#heroLeftVerticalFade)"
+        strokeLinecap="butt"
+        strokeWidth="5"
+      />
+      <path
+        d="M 501 463 L 6000 463"
+        fill="none"
+        stroke="url(#heroHorizontalExtensionFade)"
+        strokeLinecap="butt"
+        strokeWidth="5"
+      />
+      <path
+        d="M 1343 -3000 L 1343 463"
+        fill="none"
+        stroke="url(#heroRightVerticalFade)"
+        strokeLinecap="butt"
+        strokeWidth="5"
+      />
+    </svg>
+  );
+}
+
 export default function Home() {
   const featuredProjects = getFeaturedProjects().slice(0, 2);
 
@@ -176,14 +242,7 @@ export default function Home() {
       {/* Hero Section */}
       <section className="home-hero relative w-full overflow-hidden">
         <div className="hero-artwork-frame absolute pointer-events-none">
-          <Image
-            src="/ahamasmi-hero-line-art.png"
-            alt=""
-            fill
-            sizes="100vw"
-            className="hero-logo-artwork object-contain"
-            priority
-          />
+          <HeroLogoArtwork />
           <HeroBrandName />
         </div>
         <p className="hero-signature">I am Architect</p>
@@ -202,11 +261,18 @@ export default function Home() {
             left: 50%;
             top: 50%;
             width: min(103.625rem, 100vw);
+            overflow: visible;
             transform: translate(-50%, -50%);
           }
 
           .hero-logo-artwork {
-            object-position: center center;
+            display: block;
+            height: 100%;
+            left: 0;
+            overflow: visible;
+            position: absolute;
+            top: 0;
+            width: 100%;
           }
 
           .hero-brand-name,
