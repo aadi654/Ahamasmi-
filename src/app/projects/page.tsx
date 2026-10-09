@@ -39,10 +39,10 @@ function getProjectCardAspectClass(project: Project, index: number) {
 }
 
 const projectStats = [
-  { value: "35+", label: "Projects" },
-  { value: "8", label: "Cities" },
-  { value: "4", label: "Disciplines" },
-  { value: "12", label: "Years" },
+  { value: "53+", label: "Projects" },
+  { value: "10", label: "Cities" },
+  { value: "5", label: "Disciplines" },
+  { value: "15+", label: "Years" },
 ];
 
 function isProjectFilter(value: string | null): value is ProjectFilter {
@@ -102,7 +102,7 @@ function ProjectsPageContent() {
               <div className="mt-8 border-t border-foreground/10 pt-6">
                 <p className="text-[11px] uppercase tracking-[0.22em] text-foreground/42">GLOBAL FOOTPRINTS</p>
                 <p className="mt-3 text-sm font-light leading-relaxed tracking-[0.14em] text-foreground/72">
-                  Israel / London / Africa / Dubai
+                  Israel, London, Africa, Dubai, Malaysia, USA, Nepal, Indonesia, Doha, Australia
                 </p>
               </div>
             </div>

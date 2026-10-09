@@ -281,7 +281,12 @@ export function ProjectDetailClient({ project }: { project: Project }) {
   const metadataItems = useMemo(
     () => [
       project.location ? { label: "Location", value: project.location } : null,
-      { label: "Category", value: projectCategoryLabels[project.category] },
+      {
+        label: "Category",
+        value: project.subcategory
+          ? `${projectCategoryLabels[project.category]} · ${project.subcategory}`
+          : projectCategoryLabels[project.category],
+      },
       project.completionYear ? { label: "Year", value: project.completionYear } : null,
       project.area ? { label: "Area", value: project.area } : null,
     ].filter(Boolean) as { label: string; value: string }[],
