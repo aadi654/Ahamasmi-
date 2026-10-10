@@ -39,7 +39,7 @@ function getProjectCardAspectClass(project: Project, index: number) {
 }
 
 const projectStats = [
-  { value: "53+", label: "Projects" },
+  { value: "350+", label: "Projects" },
   { value: "10", label: "Cities" },
   { value: "5", label: "Disciplines" },
   { value: "15+", label: "Years" },

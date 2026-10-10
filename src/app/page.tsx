@@ -377,7 +377,7 @@ export default function Home() {
           className="max-w-5xl mx-auto"
         >
           <p className="text-3xl md:text-5xl lg:text-6xl font-light leading-[1.2] md:leading-tight tracking-tight text-foreground text-balance">
-            Architecture is not just about building structures. It is the art of <span className="text-saffron italic">shaping experiences</span> and crafting timeless connections between humans and space.
+            Architecture is not only about designing spaces. It is the art of crafting the space to <span className="text-saffron italic">add value to your life</span> and invoking timeless connections between yourself and space.
           </p>
           <div className="mt-16 border-t border-foreground/10 pt-8 flex items-center justify-between">
             <span className="uppercase tracking-widest text-xs font-medium text-muted">Ahamasmi Studio</span>
